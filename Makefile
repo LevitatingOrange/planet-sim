@@ -47,4 +47,6 @@ glad:
 clean:
 	rm -rf $(BUILD_DIR)
 	rm -rf $(OBJ_DIR)
+
+super_clean: clean
 	rm -rf $(GLAD_DIR)
