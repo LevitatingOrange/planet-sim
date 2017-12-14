@@ -83,7 +83,7 @@ GLuint loadShader(const char *vertex_path, const char* fragment_path) {
 }
 
 
-Program::Program(std::string name, std::string vertex_shader, std::string fragment_shader, GLuint width, GLuint height, double updateTime): updateTime(updateTime) {
+Program::Program(std::string name, std::string vertex_shader, std::string fragment_shader, GLuint width, GLuint height, float updateTime): updateTime(updateTime) {
   if(!glfwInit()) {
     throw std::string("Failed to initialize GLFW");
   }
