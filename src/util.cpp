@@ -1,4 +1,9 @@
 #include "util.hpp"
+#include <iostream>
+
+void vprint(glm::vec3 vector) {
+  std::cout << vector.x << ", " << vector.y << ", " << vector.z << std::endl;
+}
 
 
 glm::vec3 midpoint(glm::vec3 a, glm::vec3 b) {
