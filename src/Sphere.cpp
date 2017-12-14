@@ -65,17 +65,13 @@ void Sphere::generateVertices() {
 }
 
 void Sphere::createShape() {
+  vectors.clear();
+  vertices.clear();
+  indices.clear();
   generateMesh();
   reduce();
   spherify();
   generateVertices();
-}
-
-Sphere::Sphere(GLuint matrixID) : matrixID(matrixID) {
-  radius = 0.7;
-  detail = 4;
-  createShape();
-  initGL();
 }
 
 void Sphere::initGL() {
@@ -107,6 +103,15 @@ void Sphere::initGL() {
   model = glm::mat4(1.0f);
 }
 
+
+Sphere::Sphere(GLuint matrixID) : matrixID(matrixID) {
+  radius = 0.5;
+  detail = 3;
+  rotation = 0;
+  createShape();
+  initGL();
+}
+
 Sphere::~Sphere() {
   if (vertexArray != 0) {
     glDeleteVertexArrays(1, &vertexArray);
@@ -116,27 +121,15 @@ Sphere::~Sphere() {
   }
 }
 
-void Sphere::processInput(GLFWwindow* window) {
-  float angleX = 0.0;
-  if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-    angleX = 0.1;
-  } else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-    angleX = -0.1;
-  } else {
-    angleX = 0.0;
-  }
-  model = glm::rotate(model, angleX, glm::vec3(0,1,0));
-}
-
 void Sphere::render(glm::mat4 view, glm::mat4 projection) {
-  
+  model = glm::rotate(model, rotation, glm::vec3(0,1,0));
   glm::mat4 mvp = projection * view * model;
   glUniformMatrix4fv(matrixID, 1, GL_FALSE, &mvp[0][0]);
 
   glBindVertexArray(vertexArray);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
   // FIXME: if indice size changes while rendering this will blow up
-  glDrawElements(GL_LINES, indices.size(), GL_UNSIGNED_INT, (void*)0);
+  glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)0);
 #ifdef DEBUG
   glBindVertexArray(0);
 #endif

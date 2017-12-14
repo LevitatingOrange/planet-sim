@@ -106,7 +106,7 @@ Program::Program(std::string name, std::string vertex_shader, std::string fragme
 #ifdef DEBUG
   glad_set_post_callback(&_post_call_callback_default);
 #endif
-  
+
   glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
   GLuint program = loadShader(vertex_shader.c_str(), fragment_shader.c_str());
@@ -118,43 +118,25 @@ Program::Program(std::string name, std::string vertex_shader, std::string fragme
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
 
-  // matrices
-  GLuint matrixID = glGetUniformLocation(program, "MVP");
-  projection = glm::perspective(glm::radians(45.0f), (float) width / (float)height, 0.1f, 100.0f);
-  view = glm::lookAt(glm::vec3(3,3,3), 
-		     glm::vec3(0,0,0),
-		     glm::vec3(0,1,0));
-  // models
-  spheres.push_back(new Sphere(matrixID));
+  // start the universe
+  universe = new Universe(glGetUniformLocation(program, "MVP"), width, height);
+
+  // key callback shenanigans in courtesy of
+  // https://stackoverflow.com/questions/7676971/pointing-to-a-function-that-is-a-class-member-glfw-setkeycallback
+  glfwSetWindowUserPointer(window, universe);
+  auto func = [](GLFWwindow* w, int key, int, int, int) {
+   static_cast<Universe*>(glfwGetWindowUserPointer(w))->handleKey(key);
+  };
+  glfwSetKeyCallback(window, func);
 }
 
 void Program::startMainLoop() {
   do {
-    processInput();
-    update();
-    render();
+    universe->update();
+    universe->render();
+    glfwSwapBuffers(window);
     glfwPollEvents();
-  } while(glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0);
-}
-
-void Program::render() {
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  for (size_t i = 0; i < spheres.size(); i++) {
-    spheres[i]->render(view, projection);
-  }
-  glfwSwapBuffers(window);
-}
-
-void Program::update() {
-  for (size_t i = 0; i < spheres.size(); i++) {
-    spheres[i]->update();
-  }
-}
-
-void Program::processInput() {
-  for (size_t i = 0; i < spheres.size(); i++) {
-    spheres[i]->processInput(window);
-  }
+  } while(glfwWindowShouldClose(window) == 0);
 }
 
 

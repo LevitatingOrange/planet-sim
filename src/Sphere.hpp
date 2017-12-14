@@ -24,10 +24,10 @@ class Sphere {
   void generateVertices();
   void createShape();
 public:
+  float rotation;
   Sphere(GLuint matrixID);
   ~Sphere();
   void render(glm::mat4 view, glm::mat4 projection);
   void update();
-  void processInput(GLFWwindow* window);
 };
 #endif
