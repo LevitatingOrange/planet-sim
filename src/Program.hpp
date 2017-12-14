@@ -9,10 +9,11 @@
 #define PROGRAM_H
 
 class Program {
-  GLFWwindow* window;
-  Universe* universe;
+GLFWwindow* window;
+Universe* universe;
+double updateTime;
 public:
-  Program(std::string name, std::string vertex_shader, std::string fragment_shader, GLuint width, GLuint height);
+Program(std::string name, std::string vertex_shader, std::string fragment_shader, GLuint width, GLuint height, double updateTime);
   void startMainLoop();
   ~Program();
 };

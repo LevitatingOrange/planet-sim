@@ -60,7 +60,7 @@ void Sphere::spherify() {
 
 void Sphere::generateVertices() {
   for (size_t i = 0; i < vectors.size(); i++) {
-    vertices.push_back(Vertex {vectors[i], glm::vec3(1.0, 1.0, 1.0)});
+    vertices.push_back(Vertex {vectors[i], vectors[i] / radius, glm::vec3(1.0, 1.0, 1.0)});
   }
 }
 
@@ -85,11 +85,12 @@ void Sphere::initGL() {
   glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
 
   // link VBO and attribute information into the VAO
-  glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-  glEnableVertexAttribArray(1);
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(GLfloat) * 3));
-
+  glEnableVertexAttribArray(VERTEX_ID);
+  glVertexAttribPointer(VERTEX_ID, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+  glEnableVertexAttribArray(NORMAL_ID);
+  glVertexAttribPointer(NORMAL_ID, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(GLfloat) * 3));
+  glEnableVertexAttribArray(COLOR_ID);
+  glVertexAttribPointer(COLOR_ID, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(GLfloat) * 6));
   // EBO
   glGenBuffers(1, &indexBuffer);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
@@ -104,14 +105,13 @@ void Sphere::initGL() {
 }
 
 
-Sphere::Sphere(GLuint matrixID, glm::vec3 position, float radius) :
-  matrixID(matrixID), position(position), radius(radius) {
-  radius = 0.5;
-  detail = 3;
-  rotation = 0;
+Sphere::Sphere(unsigned int detail, glm::vec3 position, float radius, float rotation, float obliquity) :
+  detail(detail), position(position),
+  radius(radius), rotation(rotation), obliquity(obliquity) {
   createShape();
   initGL();
   model = glm::translate(model, position);
+  model = glm::rotate(model, obliquity, glm::vec3(0,0,1));
 }
 
 Sphere::~Sphere() {
@@ -124,9 +124,8 @@ Sphere::~Sphere() {
 }
 
 void Sphere::render(glm::mat4 view, glm::mat4 projection) {
-  model = glm::rotate(model, rotation, glm::vec3(0,1,0));
   glm::mat4 mvp = projection * view * model;
-  glUniformMatrix4fv(matrixID, 1, GL_FALSE, &mvp[0][0]);
+  glUniformMatrix4fv(MVP_ID, 1, GL_FALSE, &mvp[0][0]);
 
   glBindVertexArray(vertexArray);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
@@ -138,5 +137,6 @@ void Sphere::render(glm::mat4 view, glm::mat4 projection) {
 }
 
 void Sphere::update() {
+  model = glm::rotate(model, rotation, glm::vec3(0,1,0));
 }
 

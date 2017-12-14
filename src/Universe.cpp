@@ -1,14 +1,17 @@
 #include "Universe.hpp"
 
-Universe::Universe(GLuint matrixID, GLuint width, GLuint height) {
+Universe::Universe(GLuint width, GLuint height, double updateTime): updateTime(updateTime) {
   // matrices
   projection = glm::perspective(glm::radians(45.0f), (float) width / (float)height, 0.1f, 100.0f);
-  view = glm::lookAt(glm::vec3(3,3,3), 
+  view = glm::lookAt(glm::vec3(50,50,50), 
 		     glm::vec3(0,0,0),
 		     glm::vec3(0,1,0));
 
-  spheres.push_back(new Sphere(matrixID, glm::vec3(-2.0, 0.0, 0.0), 0.5));
-  spheres.push_back(new Sphere(matrixID, glm::vec3(2.0, 0.0, 0.0), 0.5));
+  spheres.push_back(new Sphere(4, glm::vec3(-2.0, 0.0, 0.0), 0.5, 0.2, 0.4));
+  spheres.push_back(new Sphere(4, glm::vec3(2.0, 0.0, 0.0), 0.5, -0.1, 0.2));
+  running = true;
+  time = 0;
+  pressed_space = false;
 }
 
 void Universe::render() {
@@ -19,19 +22,22 @@ void Universe::render() {
 }
 
 void Universe::update() {
-  for (size_t i = 0; i < spheres.size(); i++) {
-    spheres[i]->update();
+  if (running) {
+    for (size_t i = 0; i < spheres.size(); i++) {
+      spheres[i]->update();
+    }
   }
+  time += updateTime;
 }
 
-void Universe::handleKey(int key) {
-  if (key == GLFW_KEY_LEFT) {
-    for (size_t i = 0; i < spheres.size(); i++) {
-      spheres[i]->rotation = 0.3;
+void Universe::processInput(GLFWwindow* window) {
+  if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+    if (!pressed_space) {
+      running = !running;
     }
-  } else if (key == GLFW_KEY_RIGHT) {
-    for (size_t i = 0; i < spheres.size(); i++) {
-      spheres[i]->rotation = -0.3;
-    }
-  } 
+    pressed_space = true;
+  }
+  if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE) {
+    pressed_space = false;
+  }
 }

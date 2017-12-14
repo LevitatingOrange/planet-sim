@@ -1,6 +1,7 @@
 #include "Program.hpp"
 #include <fstream>
 #include <sstream>
+#include <chrono>
 
 #ifdef DEBUG
 void _post_call_callback_default(const char *name, void *funcptr, int len_args, ...) {
@@ -82,7 +83,7 @@ GLuint loadShader(const char *vertex_path, const char* fragment_path) {
 }
 
 
-Program::Program(std::string name, std::string vertex_shader, std::string fragment_shader, GLuint width, GLuint height) {
+Program::Program(std::string name, std::string vertex_shader, std::string fragment_shader, GLuint width, GLuint height, double updateTime): updateTime(updateTime) {
   if(!glfwInit()) {
     throw std::string("Failed to initialize GLFW");
   }
@@ -119,23 +120,38 @@ Program::Program(std::string name, std::string vertex_shader, std::string fragme
   glDepthFunc(GL_LESS);
 
   // start the universe
-  universe = new Universe(glGetUniformLocation(program, "MVP"), width, height);
+  universe = new Universe(width, height, updateTime);
 
   // key callback shenanigans in courtesy of
   // https://stackoverflow.com/questions/7676971/pointing-to-a-function-that-is-a-class-member-glfw-setkeycallback
-  glfwSetWindowUserPointer(window, universe);
-  auto func = [](GLFWwindow* w, int key, int, int, int) {
-   static_cast<Universe*>(glfwGetWindowUserPointer(w))->handleKey(key);
-  };
-  glfwSetKeyCallback(window, func);
+  //glfwSetWindowUserPointer(window, universe);
+  //auto func = [](GLFWwindow* w, int key, int, int, int) {
+  // static_cast<Universe*>(glfwGetWindowUserPointer(w))->handleKey(key);
+  //};
+  //glfwSetKeyCallback(window, func);
 }
 
+// http://gameprogrammingpatterns.com/game-loop.html
 void Program::startMainLoop() {
+  double previous = glfwGetTime() * 1000;
+  double lag = 0.0;
+  
   do {
-    universe->update();
+    double current = glfwGetTime() * 1000;
+    double elapsed = current - previous;
+    previous = current;
+    lag += elapsed;
+    
+    glfwPollEvents();
+    universe->processInput(window);
+
+    while (lag >= updateTime) {
+      universe->update();
+      lag -= updateTime;
+    }
+    // TODO: fix stuttering (see article above)
     universe->render();
     glfwSwapBuffers(window);
-    glfwPollEvents();
   } while(glfwWindowShouldClose(window) == 0);
 }
 
