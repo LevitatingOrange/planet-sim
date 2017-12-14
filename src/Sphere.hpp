@@ -20,10 +20,14 @@ class Sphere {
   void generateMesh();
   void subdivide(glm::vec3 a, glm::vec3 b, glm::vec3 c, int depth);
   void reduce();
+  void spherify();
   void generateVertices();
+  void createShape();
 public:
   Sphere(GLuint matrixID);
   ~Sphere();
-  void render(glm::mat4 view, glm::mat4 projection, float angleX);
+  void render(glm::mat4 view, glm::mat4 projection);
+  void update();
+  void processInput(GLFWwindow* window);
 };
 #endif

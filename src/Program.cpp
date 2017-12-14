@@ -115,13 +115,13 @@ Program::Program(std::string name, std::string vertex_shader, std::string fragme
   //glViewport(0, 0, width, height);
   //glClearColor(0.0, 0.0, 1.0, 1.0);
 
-  //glEnable(GL_DEPTH_TEST);
-  //glDepthFunc(GL_LESS);
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LESS);
 
   // matrices
   GLuint matrixID = glGetUniformLocation(program, "MVP");
   projection = glm::perspective(glm::radians(45.0f), (float) width / (float)height, 0.1f, 100.0f);
-  view = glm::lookAt(glm::vec3(4,3,3), 
+  view = glm::lookAt(glm::vec3(3,3,3), 
 		     glm::vec3(0,0,0),
 		     glm::vec3(0,1,0));
   // models
@@ -129,21 +129,34 @@ Program::Program(std::string name, std::string vertex_shader, std::string fragme
 }
 
 void Program::startMainLoop() {
-  float angleX = 0.0;
   do {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    spheres[0]->render(view, projection, angleX);
-    glfwSwapBuffers(window);
+    processInput();
+    update();
+    render();
     glfwPollEvents();
-    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-      angleX = 0.3;
-    } else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-      angleX = -0.3;
-    } else {
-      angleX = 0.0;
-    }
   } while(glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0);
 }
+
+void Program::render() {
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  for (size_t i = 0; i < spheres.size(); i++) {
+    spheres[i]->render(view, projection);
+  }
+  glfwSwapBuffers(window);
+}
+
+void Program::update() {
+  for (size_t i = 0; i < spheres.size(); i++) {
+    spheres[i]->update();
+  }
+}
+
+void Program::processInput() {
+  for (size_t i = 0; i < spheres.size(); i++) {
+    spheres[i]->processInput(window);
+  }
+}
+
 
 Program::~Program() {
   std::cout << "Program terminated" << std::endl;

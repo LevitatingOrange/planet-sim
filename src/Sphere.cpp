@@ -3,12 +3,12 @@
 
 void Sphere::subdivide(glm::vec3 a, glm::vec3 b, glm::vec3 c, int depth) {
   if (depth == 0) {
-    indices.push_back(vectors.size() - 1);
-    indices.push_back(vectors.size());
-    indices.push_back(vectors.size() + 1);
     vectors.push_back(a);
     vectors.push_back(b);
     vectors.push_back(c);
+    indices.push_back(vectors.size() - 3);
+    indices.push_back(vectors.size() - 2);
+    indices.push_back(vectors.size() - 1);
   } else {
     glm::vec3 m1 = midpoint(a, b);
     glm::vec3 m2 = midpoint(a, c);
@@ -24,44 +24,38 @@ void Sphere::subdivide(glm::vec3 a, glm::vec3 b, glm::vec3 c, int depth) {
 
 void Sphere::reduce() {
   std::vector<glm::vec3> new_vectors;
-
- outer: for (size_t i = 0; i < vectors.size(); i++) {
-    glm::vec3 curr = vectors[i];
-    for (size_t j = 0; j < new_vectors.size(); j++) {
-      if (vequal(curr, new_vectors[j])) {
-	goto outer;
-      }
-    }
+  
+  for (size_t i = 0; i < vectors.size(); i++) {
+    if (indices[i] == i) {
+      glm::vec3 curr = vectors[i];
+      new_vectors.push_back(curr);
     
-    for (size_t j = 0; j < vectors.size(); j++) {
-      if (i != j) {
+      for (size_t j = 0; j < vectors.size(); j++) {
 	glm::vec3 dup = vectors[j];
-	if (vequal(curr, dup)) {
-	  indices.push_back(i);
+	if (glm::distance(curr, dup) < 0.001) {
+	  indices[j] = new_vectors.size() - 1;
 	}
       }
     }
-    new_vectors.push_back(curr);
   }
   vectors = new_vectors;
 }
 
 void Sphere::generateMesh() {
+  subdivide(glm::vec3(-radius, 0, -radius), glm::vec3(0, radius, 0), glm::vec3(radius, 0, -radius), detail);
   subdivide(glm::vec3(radius, 0, -radius), glm::vec3(0, radius, 0), glm::vec3(radius, 0, radius), detail);
-  subdivide(glm::vec3(radius, 0, -radius), glm::vec3(0, -radius, 0), glm::vec3(radius, 0, radius), detail);
-  subdivide(glm::vec3(radius, 0, -radius), glm::vec3(0, radius, 0), glm::vec3(-radius, 0, radius), detail);
-  subdivide(glm::vec3(radius, 0, -radius), glm::vec3(0, -radius, 0), glm::vec3(-radius, 0, radius), detail);
-  subdivide(glm::vec3(-radius, 0, radius), glm::vec3(0, radius, 0), glm::vec3(radius, 0, -radius), detail);
-  subdivide(glm::vec3(-radius, 0, radius), glm::vec3(0, -radius, 0), glm::vec3(radius, 0, -radius), detail);
+  subdivide(glm::vec3(-radius, 0, -radius), glm::vec3(0, radius, 0), glm::vec3(-radius, 0, radius), detail);
   subdivide(glm::vec3(-radius, 0, radius), glm::vec3(0, radius, 0), glm::vec3(radius, 0, radius), detail);
+  subdivide(glm::vec3(-radius, 0, -radius), glm::vec3(0, -radius, 0), glm::vec3(radius, 0, -radius), detail);
+  subdivide(glm::vec3(radius, 0, -radius), glm::vec3(0, -radius, 0), glm::vec3(radius, 0, radius), detail);
+  subdivide(glm::vec3(-radius, 0, -radius), glm::vec3(0, -radius, 0), glm::vec3(-radius, 0, radius), detail);
   subdivide(glm::vec3(-radius, 0, radius), glm::vec3(0, -radius, 0), glm::vec3(radius, 0, radius), detail);
-  // vertices.push_back(Vertex {glm::vec3(-1.0f, -1.0f, 0.0f), glm::vec3(1.0f, 0.0, 0.0)});
-  // vertices.push_back(Vertex {glm::vec3(1.0f, -1.0f, 0.0f), glm::vec3(0.0, 1.0f, 0.0)});
-  // vertices.push_back(Vertex {glm::vec3(0.0f,  1.0f, 0.0f), glm::vec3(0.0, 0.0, 1.0f)});
+}
 
-  // indices = {
-  //  0, 1, 2
-  // };
+void Sphere::spherify() {
+  for (size_t i = 0; i < vectors.size(); i++) {
+    vectors[i] = normalize(glm::vec3(0,0,0), vectors[i], radius);
+  }
 }
 
 void Sphere::generateVertices() {
@@ -70,22 +64,17 @@ void Sphere::generateVertices() {
   }
 }
 
-Sphere::Sphere(GLuint matrixID) : matrixID(matrixID) {
-  // auto s = subdivide(
-  // 		     glm::vec3(-1.0f, -1.0f, 0.0f),
-  // 		     glm::vec3(1.0, 0.0, 0.0),
-  // 		     glm::vec3(1.0f, -1.0f, 0.0f),
-  // 		     4);
-  //generateOctahedron();
-  radius = 0.7;
-  detail = 0;
+void Sphere::createShape() {
   generateMesh();
-  //reduce();
+  reduce();
+  spherify();
   generateVertices();
+}
 
-  // for (size_t i = 0; i < vectors.size(); i++) {
-  //   printf("%f %f %f\n", vectors[i].x, vectors[i].y, vectors[i].z);
-  // }
+Sphere::Sphere(GLuint matrixID) : matrixID(matrixID) {
+  radius = 0.7;
+  detail = 4;
+  createShape();
   initGL();
 }
 
@@ -127,8 +116,19 @@ Sphere::~Sphere() {
   }
 }
 
-void Sphere::render(glm::mat4 view, glm::mat4 projection, float angleX) {
-  model = glm::rotate(model, angleX, glm::vec3(1,0,0));
+void Sphere::processInput(GLFWwindow* window) {
+  float angleX = 0.0;
+  if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+    angleX = 0.1;
+  } else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+    angleX = -0.1;
+  } else {
+    angleX = 0.0;
+  }
+  model = glm::rotate(model, angleX, glm::vec3(0,1,0));
+}
+
+void Sphere::render(glm::mat4 view, glm::mat4 projection) {
   
   glm::mat4 mvp = projection * view * model;
   glUniformMatrix4fv(matrixID, 1, GL_FALSE, &mvp[0][0]);
@@ -141,3 +141,7 @@ void Sphere::render(glm::mat4 view, glm::mat4 projection, float angleX) {
   glBindVertexArray(0);
 #endif
 }
+
+void Sphere::update() {
+}
+

@@ -1,7 +1,7 @@
 #include "util.hpp"
 
 
-const float epsilon = 0.001;
+const float epsilon = 0.00001;
 
 
 bool vequal(glm::vec3 a, glm::vec3 b) {
