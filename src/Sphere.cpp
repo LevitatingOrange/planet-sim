@@ -104,12 +104,14 @@ void Sphere::initGL() {
 }
 
 
-Sphere::Sphere(GLuint matrixID) : matrixID(matrixID) {
+Sphere::Sphere(GLuint matrixID, glm::vec3 position, float radius) :
+  matrixID(matrixID), position(position), radius(radius) {
   radius = 0.5;
   detail = 3;
   rotation = 0;
   createShape();
   initGL();
+  model = glm::translate(model, position);
 }
 
 Sphere::~Sphere() {

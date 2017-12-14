@@ -13,7 +13,6 @@ typedef struct _Vertex {
   glm::vec3 color;
 } Vertex;
 
-bool vequal(glm::vec3 a, glm::vec3 b);
 glm::vec3 midpoint(glm::vec3 a, glm::vec3 b);
 glm::vec3 normalize(glm::vec3 a, glm::vec3 b, float length);
 #endif

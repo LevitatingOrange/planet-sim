@@ -5,8 +5,9 @@
 #include "util.hpp"
 #include <vector>
 
+// TODO: implement that planets are not perfect spheres
+
 class Sphere {
-  float radius;
   unsigned int detail;
   GLuint vertexArray = 0;
   GLuint vertexBuffer = 0;
@@ -24,8 +25,11 @@ class Sphere {
   void generateVertices();
   void createShape();
 public:
+  glm::vec3 position;
+  float radius;
   float rotation;
-  Sphere(GLuint matrixID);
+  
+  Sphere(GLuint matrixID, glm::vec3 position, float radius);
   ~Sphere();
   void render(glm::mat4 view, glm::mat4 projection);
   void update();

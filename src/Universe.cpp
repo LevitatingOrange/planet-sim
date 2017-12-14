@@ -7,7 +7,8 @@ Universe::Universe(GLuint matrixID, GLuint width, GLuint height) {
 		     glm::vec3(0,0,0),
 		     glm::vec3(0,1,0));
 
-  spheres.push_back(new Sphere(matrixID));
+  spheres.push_back(new Sphere(matrixID, glm::vec3(-2.0, 0.0, 0.0), 0.5));
+  spheres.push_back(new Sphere(matrixID, glm::vec3(2.0, 0.0, 0.0), 0.5));
 }
 
 void Universe::render() {
