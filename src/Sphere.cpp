@@ -101,15 +101,17 @@ void Sphere::initGL() {
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 #endif
+  model = glm::mat4(1.0f);
 }
 
-Sphere::Sphere(unsigned int detail, float radius, float rotation_angle, float obliquity) :
-  detail(detail), radius(radius), rotation_angle(rotation_angle), obliquity(obliquity) {
+
+Sphere::Sphere(unsigned int detail, glm::vec3 position, float radius, float rotation, float obliquity) :
+  detail(detail), position(position),
+  radius(radius), rotation(rotation), obliquity(obliquity) {
   createShape();
   initGL();
-  rotation = glm::rotate(glm::mat4(1.0f), obliquity, glm::vec3(0,0,1));
-  translation = glm::mat4(1.0f);
-  old_position = glm::vec3(0,0,0);
+  model = glm::translate(model, position);
+  model = glm::rotate(model, obliquity, glm::vec3(0,0,1));
 }
 
 Sphere::~Sphere() {
@@ -122,7 +124,6 @@ Sphere::~Sphere() {
 }
 
 void Sphere::render(glm::mat4 view, glm::mat4 projection) {
-  glm::mat4 model = translation * rotation;
   glm::mat4 mvp = projection * view * model;
   glUniformMatrix4fv(MVP_ID, 1, GL_FALSE, &mvp[0][0]);
 
@@ -135,9 +136,7 @@ void Sphere::render(glm::mat4 view, glm::mat4 projection) {
 #endif
 }
 
-void Sphere::update(glm::vec3 position) {
-  translation = glm::translate(translation, old_position - position);
-  rotation = glm::rotate(rotation, rotation_angle, glm::vec3(0,1,0));
-  old_position = position;
+void Sphere::update() {
+  model = glm::rotate(model, rotation, glm::vec3(0,1,0));
 }
 

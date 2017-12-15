@@ -14,7 +14,6 @@ typedef struct _Vertex {
   glm::vec3 color;
 } Vertex;
 
-void vprint(glm::vec3 vector);
 glm::vec3 midpoint(glm::vec3 a, glm::vec3 b);
 glm::vec3 normalize(glm::vec3 a, glm::vec3 b, float length);
 #endif

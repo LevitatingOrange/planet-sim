@@ -11,9 +11,9 @@
 class Program {
 GLFWwindow* window;
 Universe* universe;
-float updateTime;
+double updateTime;
 public:
-Program(std::string name, std::string vertex_shader, std::string fragment_shader, GLuint width, GLuint height, float updateTime);
+Program(std::string name, std::string vertex_shader, std::string fragment_shader, GLuint width, GLuint height, double updateTime);
   void startMainLoop();
   ~Program();
 };

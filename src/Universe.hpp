@@ -1,22 +1,21 @@
-#include "CelestialBody.hpp"
+#include "Sphere.hpp"
 
 #ifndef UNIVERSE_H
 #define UNIVERSE_H
 
 class Universe {
-  std::vector<CelestialBody*> bodies;
+  std::vector<Sphere*> spheres;
   glm::mat4 view;
   glm::mat4 projection;
-  float updateTime;
+  double updateTime;
   bool running;
-  float time;
+  double time;
   bool pressed_space;
 public:
-  Universe(GLuint width, GLuint height, float updateTime);
+  Universe(GLuint width, GLuint height, double updateTime);
   ~Universe();
   void render();
   void update();
-  void calculate();
   void processInput(GLFWwindow* window);
 };
 #endif

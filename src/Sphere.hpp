@@ -20,9 +20,7 @@ class Sphere {
   std::vector<GLuint> indices;
   GLuint indexBuffer = 0;
   unsigned int detail;
-  glm::mat4 rotation;
-  glm::mat4 translation;
-  glm::vec3 old_position;
+  glm::mat4 model;
   void initGL();
   void generateMesh();
   void subdivide(glm::vec3 a, glm::vec3 b, glm::vec3 c, int depth);
@@ -32,13 +30,14 @@ class Sphere {
   void createShape();
 public:
   // physical traits
+  glm::vec3 position;
   float radius;
-  float rotation_angle;
+  float rotation;
   float obliquity;
   
-  Sphere(unsigned int detail, float radius, float rotation_angle, float obliquity);
+  Sphere(unsigned int detail, glm::vec3 position, float radius, float rotation, float obliquity);
   ~Sphere();
   void render(glm::mat4 view, glm::mat4 projection);
-  void update(glm::vec3 position);
+  void update();
 };
 #endif
