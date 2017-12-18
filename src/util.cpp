@@ -14,3 +14,19 @@ glm::vec3 normalize(glm::vec3 a, glm::vec3 b, float length) {
   return a + ((b - a) * length / glm::distance(a, b));
 }
 
+float angle_clip(float angle, float increase) {
+  if (increase > 0) {
+    if (angle >= 2 * M_PI) {
+      return increase;
+    } else {
+      return angle + increase;
+    }
+  }
+  else {
+    if (angle <= 0) {
+      return 2 * M_PI + increase;
+    } else {
+      return angle + increase;
+    }
+  }
+}

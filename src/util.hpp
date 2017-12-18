@@ -17,5 +17,6 @@ typedef struct _Vertex {
 void vprint(glm::vec3 vector);
 glm::vec3 midpoint(glm::vec3 a, glm::vec3 b);
 glm::vec3 normalize(glm::vec3 a, glm::vec3 b, float length);
+float angle_clip(float angle, float increase);
 #endif
 
