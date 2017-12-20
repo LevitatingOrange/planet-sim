@@ -25,19 +25,9 @@ Universe::~Universe() {
 }
 
 void Universe::render() {
-  // (eye - view_direction) + direction
-  //eye = bodies[1]->position;
   camera_up = glm::normalize(glm::cross(direction, glm::normalize(glm::cross(up, direction))));
   view = glm::lookAt(eye, eye + direction, camera_up);
   
-  //glm::mat4x4 rot = glm::yawPitchRoll(yaw, pitch, roll);
-  //view = glm::translate(rot, eye);
-  //glm::vec4 new_eye = glm::normalize(glm::vec4(0, 0, 1, 0) * rot) * speed;
-  //eye += glm::vec3(new_eye.x, new_eye.y, new_eye.z);
-  //eye = eye + (direction * speed);
-  //view = glm::lookAt(eye, 
-  //		     glm::vec3(0,0,0),
-  //		     glm::vec3(0,1,0));
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   for (size_t i = 0; i < bodies.size(); i++) {
     bodies[i]->render(view, projection);
