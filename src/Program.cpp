@@ -109,7 +109,8 @@ Program::Program(std::string name, std::string vertex_shader, std::string fragme
 #endif
 
   glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-
+  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  
+  
   GLuint program = loadShader(vertex_shader.c_str(), fragment_shader.c_str());
   glUseProgram(program);
   
