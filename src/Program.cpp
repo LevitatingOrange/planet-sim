@@ -21,26 +21,27 @@ std::string readFile(const char* filePath) {
     throw std::string("Could not read file");
   }
 
-  std::stringstream buffer;
-  buffer << fileStream.rdbuf();
-  buffer << "\0";
-  fileStream.close();
+  std::string content( (std::istreambuf_iterator<char>(fileStream) ),
+                       (std::istreambuf_iterator<char>()    ) );
   
-  return buffer.str();
+  return content;
 }
 
 GLuint loadShader(const char *vertex_path, const char* fragment_path) {
   GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
   GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 
-  const char* vertexShaderSource = readFile(vertex_path).c_str();
-  const char* fragmentShaderSource = readFile(fragment_path).c_str();
+  std::string vertexShaderSource = readFile(vertex_path);
+  std::string fragmentShaderSource = readFile(fragment_path);
+
+  const char* c_vertexShaderSource = vertexShaderSource.c_str();
+  const char* c_fragmentShaderSource = fragmentShaderSource.c_str();
 
   GLint result = GL_FALSE;
   int logLength;
 
   // compile vertex shader
-  glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+  glShaderSource(vertexShader, 1, &c_vertexShaderSource, NULL);
   glCompileShader(vertexShader);
   // check for errors
   glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &result);
@@ -48,11 +49,15 @@ GLuint loadShader(const char *vertex_path, const char* fragment_path) {
   if (logLength > 1) {
     std::vector<char> vertexShaderError(logLength);
     glGetShaderInfoLog(vertexShader, logLength, NULL, vertexShaderError.data());
-    throw std::string("Could not compile vertex shader: ") + std::string(vertexShaderError.data());
+    if (result == GL_TRUE) {
+      log(WARNING, std::string(vertexShaderError.data()));
+    } else {
+      throw std::string("Could not compile vertex shader: ") + std::string(vertexShaderError.data());
+    }
   }
 
   // compile fragment shader
-  glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+  glShaderSource(fragmentShader, 1, &c_fragmentShaderSource, NULL);
   glCompileShader(fragmentShader);
   // check for errors
   glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &result);
@@ -60,7 +65,11 @@ GLuint loadShader(const char *vertex_path, const char* fragment_path) {
   if (logLength > 1) {
     std::vector<char> fragmentShaderError(logLength);
     glGetShaderInfoLog(fragmentShader, logLength, NULL, fragmentShaderError.data());
-    throw std::string("Could not compile fragment shader: ")  + std::string(fragmentShaderError.data());
+    if (result == GL_TRUE) {
+      log(WARNING, std::string(fragmentShaderError.data()));
+    } else {
+      throw std::string("Could not compile fragment shader: ") + std::string(fragmentShaderError.data());
+    }
   }
 
   // create program and link shaders
@@ -74,7 +83,12 @@ GLuint loadShader(const char *vertex_path, const char* fragment_path) {
   if (logLength > 1) {
     std::vector<char> programError(logLength);
     glGetProgramInfoLog(program, logLength, NULL, programError.data());
-    throw std::string("Could not link program: ") + std::string(programError.data());
+    if (result == GL_TRUE) {
+      log(WARNING, std::string(programError.data()));
+    } else {
+      throw std::string("Could not link program: ") + std::string(programError.data());
+
+    }
   }
   glDeleteShader(vertexShader);
   glDeleteShader(fragmentShader);
@@ -121,15 +135,7 @@ Program::Program(std::string name, std::string vertex_shader, std::string fragme
   glDepthFunc(GL_LESS);
 
   // start the universe
-  universe = new Universe(width, height, updateTime);
-
-  // key callback shenanigans in courtesy of
-  // https://stackoverflow.com/questions/7676971/pointing-to-a-function-that-is-a-class-member-glfw-setkeycallback
-  //glfwSetWindowUserPointer(window, universe);
-  //auto func = [](GLFWwindow* w, int key, int, int, int) {
-  // static_cast<Universe*>(glfwGetWindowUserPointer(w))->handleKey(key);
-  //};
-  //glfwSetKeyCallback(window, func);
+  universe = new Universe(program, width, height, updateTime);
 }
 
 // http://gameprogrammingpatterns.com/game-loop.html

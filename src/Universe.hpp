@@ -4,6 +4,10 @@
 #define UNIVERSE_H
 
 class Universe {
+  GLuint projection_id;
+  GLuint view_id;
+  GLuint view_position_id;
+  
   std::vector<CelestialBody*> bodies;
   glm::mat4 view;
   glm::mat4 projection;
@@ -32,13 +36,14 @@ class Universe {
   bool running;
   float time;
   bool pressed_space;
+  bool pressed_escape;
   bool pressed_r;
 
   // window
   GLuint width;
   GLuint height;
 public:
-  Universe(GLuint width, GLuint height, float updateTime);
+  Universe(GLuint program, GLuint width, GLuint height, float updateTime);
   ~Universe();
   void render();
   void update();

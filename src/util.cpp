@@ -1,6 +1,21 @@
 #include "util.hpp"
 #include <iostream>
 
+void log(ErrorLevel lvl, std::string msg) {
+  switch (lvl) {
+  case INFO:
+    std::cout << "[Program][INFO]: ";
+      break;
+  case WARNING:
+    std::cout << "[Program][WARNING]: ";
+    break;
+  case ERROR:
+    std::cout << "[Program][ERROR]: ";
+    break;
+  }
+  std::cout << msg << std::endl;
+}
+
 void vprint(glm::vec3 vector) {
   std::cout << vector.x << ", " << vector.y << ", " << vector.z << std::endl;
 }

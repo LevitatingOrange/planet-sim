@@ -3,19 +3,37 @@
 #ifndef CELESTIAL_BODY_H
 #define CELESTIAL_BODY_H
 
-#define G 6.674e-11
+typedef struct _ParameterID {
+  GLint ambient;
+  GLint diffuse;
+  GLint specular;
+} ParameterID;
+
+typedef struct _Parameter {
+  glm::vec3 ambient;
+  glm::vec3 diffuse;
+  glm::vec3 specular;
+} Parameter;
 
 class CelestialBody {
 public:
+  ParameterID material_id;
+  Parameter material;
+  GLint shininess_id;
+  float shininess;
+  
   glm::vec3 position;
   glm::vec3 velocity;
   float mass;
   Sphere *sphere;
 
-  CelestialBody(glm::vec3 position, glm::vec3 velocity, float mass, unsigned int detail, float radius, float rotation, float obliquity);
+  CelestialBody(GLuint program, glm::vec3 position, glm::vec3 velocity,
+		float mass, glm::vec3 color, unsigned int detail,
+		float radius, float rotation, float obliquity,
+		Parameter material, float shininess);
   ~CelestialBody();
-  void render(glm::mat4 view, glm::mat4 projection);
-  void update();
+  virtual void render();
+  virtual void update();
 };
 
 #endif

@@ -1,22 +1,25 @@
 #include "Universe.hpp"
+#include "Star.hpp"
+#include "CelestialBody.hpp"
 #include <cmath>
 #include <iostream>
 
-Universe::Universe(GLuint width, GLuint height, float updateTime):
+Universe::Universe(GLuint program, GLuint width, GLuint height, float updateTime):
+  projection_id(glGetUniformLocation(program, "projection")), view_id(glGetUniformLocation(program, "view")),
+  view_position_id(glGetUniformLocation(program, "view_position")),
   g(1), sensitivity(0.05), lastX(width/2), lastY(height/2), eye(glm::vec3(0, 0, 100)),
   direction(0, 0, -1), camera_up(glm::vec3(0, 1, 0)), yaw(-90), pitch(0), speed_modifier(0.01), speed(1), up(glm::vec3(0, 1, 0)),
-  updateTime(updateTime), running(false), time(0.0), pressed_space(false), pressed_r(false), width(width), height(height) {
+  updateTime(updateTime), running(false), time(0.0), pressed_space(false), pressed_escape(false), pressed_r(false), width(width), height(height) {
   // matrices
   projection = glm::perspective(glm::radians(45.0f), (float) width / (float)height, 0.1f, 200.0f);
   
-  bodies.push_back(new CelestialBody(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 0.0),
-				     100, 4, 5, 0.05, 45));
-  bodies.push_back(new CelestialBody(glm::vec3(15.0, 20.0, 0.0), glm::vec3(0.0, 0.0, 100),
-				     0.00001, 3, 0.5, -0.1, -10));
-  bodies.push_back(new CelestialBody(glm::vec3(-30.0, 0.0, 0.0), glm::vec3(0.0, 0.0, -100),
-				     0.00001, 3, 0.5, -0.1, -10));
-  bodies.push_back(new CelestialBody(glm::vec3(30.0, -20.0, 0.0), glm::vec3(0.0, 0.0, 50),
-				     0.00001, 3, 0.5, -0.1, -10));
+  bodies.push_back(new Star(program, glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 0.0),
+			    100, glm::vec3(1.000, 0.647, 0.000), 4, 5, 0.05, 45,
+			    Parameter {glm::vec3(1.2), glm::vec3(0.0), glm::vec3(0.0)}, 0,
+			    Parameter {glm::vec3(1.0),  glm::vec3(1.0), glm::vec3(1.0)}));
+  bodies.push_back(new CelestialBody(program, glm::vec3(15.0, 4.0, 0.0), glm::vec3(0.0, 0.0, 100),
+				     0.00001, glm::vec3(0.000, 0.000, 1.000),  3, 0.5, -0.1, -10,
+				     Parameter {glm::vec3(0.1), glm::vec3(0.6), glm::vec3(0.3)}, 10));
 }
 
 Universe::~Universe() {
@@ -28,9 +31,13 @@ void Universe::render() {
   camera_up = glm::normalize(glm::cross(direction, glm::normalize(glm::cross(up, direction))));
   view = glm::lookAt(eye, eye + direction, camera_up);
   
+  glUniformMatrix4fv(projection_id, 1, GL_FALSE, &projection[0][0]);
+  glUniformMatrix4fv(view_id, 1, GL_FALSE, &view[0][0]);
+  glUniform3fv(view_position_id, 1, (GLfloat*) &eye);
+
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   for (size_t i = 0; i < bodies.size(); i++) {
-    bodies[i]->render(view, projection);
+    bodies[i]->render();
   }
 }
 
@@ -145,6 +152,16 @@ void Universe::processInput(GLFWwindow* window) {
     }
   }
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-    glfwSetWindowShouldClose(window, 1);
+    if (!pressed_escape) {
+      if (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED) {
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+      } else {
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  
+      }
+      pressed_escape = true;
+    }
+  }
+  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_RELEASE) {
+    pressed_escape = false;
   }
 }

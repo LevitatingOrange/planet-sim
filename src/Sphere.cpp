@@ -60,7 +60,7 @@ void Sphere::spherify() {
 
 void Sphere::generateVertices() {
   for (size_t i = 0; i < vectors.size(); i++) {
-    vertices.push_back(Vertex {vectors[i], vectors[i] / radius, glm::vec3(1.0, 1.0, 1.0)});
+    vertices.push_back(Vertex {vectors[i], vectors[i] / radius, color});
   }
 }
 
@@ -103,13 +103,11 @@ void Sphere::initGL() {
 #endif
 }
 
-Sphere::Sphere(unsigned int detail, float radius, float rotation_angle, float obliquity) :
-  detail(detail), radius(radius), rotation_angle(rotation_angle), obliquity(obliquity) {
+Sphere::Sphere(GLuint program, glm::vec3 color, unsigned int detail, float radius, float rotation_angle, float obliquity) :
+  model_id(glGetUniformLocation(program, "model")), color(color), detail(detail), rotation(glm::rotate(glm::mat4(1.0f), obliquity, glm::vec3(0,0,1))),
+  translation(glm::mat4(1.0f)), old_position(glm::vec3(0,0,0)), radius(radius), rotation_angle(rotation_angle), obliquity(obliquity) {
   createShape();
   initGL();
-  rotation = glm::rotate(glm::mat4(1.0f), obliquity, glm::vec3(0,0,1));
-  translation = glm::mat4(1.0f);
-  old_position = glm::vec3(0,0,0);
 }
 
 Sphere::~Sphere() {
@@ -121,10 +119,9 @@ Sphere::~Sphere() {
   }
 }
 
-void Sphere::render(glm::mat4 view, glm::mat4 projection) {
+void Sphere::render() {
   glm::mat4 model = translation * rotation;
-  glm::mat4 mvp = projection * view * model;
-  glUniformMatrix4fv(MVP_ID, 1, GL_FALSE, &mvp[0][0]);
+  glUniformMatrix4fv(model_id, 1, GL_FALSE, &model[0][0]);
 
   glBindVertexArray(vertexArray);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
