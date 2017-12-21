@@ -14,12 +14,12 @@ Universe::Universe(GLuint program, GLuint width, GLuint height, float updateTime
   projection = glm::perspective(glm::radians(45.0f), (float) width / (float)height, 0.1f, 200.0f);
   
   bodies.push_back(new Star(program, glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 0.0),
-			    100, glm::vec3(1.000, 0.647, 0.000), 4, 5, 0.05, 45,
-			    Material {glm::vec3(1.2), glm::vec3(0.0), glm::vec3(0.0), 0, false},
-			    Light {glm::vec3(1.0),  glm::vec3(1.0), glm::vec3(1.0)}, new Texture("./resources/sun_diffuse.jpg")));
+			    100, glm::vec3(1.000, 1.000, 1.000), 4, 5, 0.05, 45,
+			    Material {glm::vec3(0.8), glm::vec3(0.0), glm::vec3(0.0), 0, false},
+			    Light {glm::vec3(1.0),  glm::vec3(1.0), glm::vec3(1.0)}, nullptr));
   bodies.push_back(new CelestialBody(program, glm::vec3(15.0, 4.0, 0.0), glm::vec3(0.0, 0.0, 100),
-				     0.00001, glm::vec3(0.000, 0.000, 1.000),  3, 0.5, -0.1, -10,
-				     Material {glm::vec3(0.1), glm::vec3(0.6), glm::vec3(0.3), 10, false}, new Texture("./resources/earth_diffuse.jpg")));
+				     0.00001, glm::vec3(1.000, 1.000, 1.000),  4, 0.5, -0.1, -10,
+				     Material {glm::vec3(0.1), glm::vec3(0.6), glm::vec3(0.4), 10, false}, nullptr));
 }
 
 Universe::~Universe() {

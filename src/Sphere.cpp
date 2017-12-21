@@ -47,16 +47,26 @@ void Sphere::reduce() {
 
 void Sphere::generateMesh() {
   float r = radius;
+  // generate octahedron
+  // top view (order of triangles):
+  //      3
+  //   +-----+
+  //   |     |
+  // 4 |     | 2
+  //   |     |
+  //   +-----+
+  //      1
   // up
-  subdivide(nv(glm::vec3(-r, 0, -r), glm::vec2(0, 0.5)), nv(glm::vec3(0, r, 0), glm::vec2(0.125, 1)), nv(glm::vec3(r, 0, -r), glm::vec2(0.25, 0.5)), detail);
-  subdivide(nv(glm::vec3(r, 0, -r), glm::vec2(0.25, 0.5)), nv(glm::vec3(0, r, 0), glm::vec2(0.375, 1)), nv(glm::vec3(r, 0, r), glm::vec2(0.5, 0.5)), detail);
-  subdivide(nv(glm::vec3(r, 0, r), glm::vec2(0.5, 0.5)), nv(glm::vec3(0, r, 0), glm::vec2(0.625, 1)), nv(glm::vec3(-r, 0, r), glm::vec2(0.75, 0.5)), detail);
-  subdivide(nv(glm::vec3(-r, 0, r), glm::vec2(0.75, 0.5)), nv(glm::vec3(0, r, 0), glm::vec2(0.875, 1)), nv(glm::vec3(-r, 0, -r), glm::vec2(1, 0.5)), detail);
+  subdivide(nv(glm::vec3(-r, 0, r), glm::vec2(0.0, 0.5)), nv(glm::vec3(0, r, 0), glm::vec2(0.125, 1)), nv(glm::vec3(r, 0, r), glm::vec2(0.25, 0.5)), detail);
+  subdivide(nv(glm::vec3(r, 0, r), glm::vec2(0.25, 0.5)), nv(glm::vec3(0, r, 0), glm::vec2(0.375, 1)), nv(glm::vec3(r, 0, -r), glm::vec2(0.5, 0.5)), detail);
+  subdivide(nv(glm::vec3(r, 0, -r), glm::vec2(0.5, 0.5)), nv(glm::vec3(0, r, 0), glm::vec2(0.625, 1)), nv(glm::vec3(-r, 0, -r), glm::vec2(0.75, 0.5)), detail);
+  subdivide(nv(glm::vec3(-r, 0, -r), glm::vec2(0.75, 0.5)), nv(glm::vec3(0, r, 0), glm::vec2(0.875, 1)), nv(glm::vec3(-r, 0, r), glm::vec2(1, 0.5)), detail);
+
   // down
-  subdivide(nv(glm::vec3(-r, 0, -r), glm::vec2(0, 0.5)), nv(glm::vec3(0, -r, 0), glm::vec2(0.125, 0)), nv(glm::vec3(r, 0, -r), glm::vec2(0.25, 0.5)), detail);
-  subdivide(nv(glm::vec3(r, 0, -r), glm::vec2(0.25, 0.5)), nv(glm::vec3(0, -r, 0), glm::vec2(0.375, 0)), nv(glm::vec3(r, 0, r), glm::vec2(0.5, 0.5)), detail);
-  subdivide(nv(glm::vec3(r, 0, r), glm::vec2(0.5, 0.5)), nv(glm::vec3(0, -r, 0), glm::vec2(0.625, 0)), nv(glm::vec3(-r, 0, r), glm::vec2(0.75, 0.5)), detail);
-  subdivide(nv(glm::vec3(-r, 0, r), glm::vec2(0.75, 0.5)), nv(glm::vec3(0, -r, 0), glm::vec2(0.875, 0)), nv(glm::vec3(-r, 0, -r), glm::vec2(1, 0.5)), detail);
+  subdivide(nv(glm::vec3(-r, 0, r), glm::vec2(0.0, 0.5)), nv(glm::vec3(0, -r, 0), glm::vec2(0.125, 0)), nv(glm::vec3(r, 0, r), glm::vec2(0.25, 0.5)), detail);
+  subdivide(nv(glm::vec3(r, 0, r), glm::vec2(0.25, 0.5)), nv(glm::vec3(0, -r, 0), glm::vec2(0.375, 0)), nv(glm::vec3(r, 0, -r), glm::vec2(0.5, 0.5)), detail);
+  subdivide(nv(glm::vec3(r, 0, -r), glm::vec2(0.5, 0.5)), nv(glm::vec3(0, -r, 0), glm::vec2(0.625, 0)), nv(glm::vec3(-r, 0, -r), glm::vec2(0.75, 0.5)), detail);
+  subdivide(nv(glm::vec3(-r, 0, -r), glm::vec2(0.75, 0.5)), nv(glm::vec3(0, -r, 0), glm::vec2(0.875, 0)), nv(glm::vec3(-r, 0, r), glm::vec2(1, 0.5)), detail);
 }
 
 void Sphere::spherify() {
@@ -76,7 +86,7 @@ void Sphere::createShape() {
   vertices.clear();
   indices.clear();
   generateMesh();
-  reduce();
+  //reduce();
   spherify();
   completeVertices();
 }
@@ -99,7 +109,7 @@ void Sphere::initGL() {
   glEnableVertexAttribArray(COLOR_ID);
   glVertexAttribPointer(COLOR_ID, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(GLfloat) * 6));
   glEnableVertexAttribArray(TEXTURE_ID);
-  glVertexAttribPointer(TEXTURE_ID, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(GLfloat) * 9));
+  glVertexAttribPointer(TEXTURE_ID, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(GLfloat) * 9));
   // EBO
   glGenBuffers(1, &indexBuffer);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
