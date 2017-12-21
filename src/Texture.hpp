@@ -5,8 +5,11 @@
 
 class Texture {
   GLuint diffuse;
+  GLuint diffuseNight;
+  bool useNight;
+  GLuint use_night_id;
 public:
-  Texture(const char* diffusePath);
+  Texture(GLuint program, const char* diffusePath, const char* diffuseNightPath);
   void render();
 };
 

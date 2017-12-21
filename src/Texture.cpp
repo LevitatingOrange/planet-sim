@@ -24,11 +24,21 @@ void generateTexture(const char* path, GLuint* texture) {
   stbi_image_free(data);
 }
 
-Texture::Texture(const char* diffusePath) {
+Texture::Texture(GLuint program, const char* diffusePath, const char* diffuseNightPath): useNight(diffuseNightPath != nullptr), use_night_id(glGetUniformLocation(program, "useNightTexture")) {
   generateTexture(diffusePath, &diffuse);
+  glUniform1i(glGetUniformLocation(program, "diffuseDayTexture"), 0);
+  if (useNight) {
+    generateTexture(diffuseNightPath, &diffuseNight);
+    glUniform1i(glGetUniformLocation(program, "diffuseNightTexture"), 1);
+  }
 }
 
 void Texture::render() {
+  glUniform1i(use_night_id, useNight);
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, diffuse);
+  if (useNight) {
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, diffuseNight);
+  }
 }

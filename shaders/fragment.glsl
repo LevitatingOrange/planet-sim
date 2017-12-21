@@ -27,7 +27,9 @@ in vec3 fragmentColor;
 in vec2 fragmentTexture;
 
 uniform bool useTexture;
-uniform sampler2D diffuseTexture;
+uniform bool useNightTexture;
+uniform sampler2D diffuseDayTexture;
+uniform sampler2D diffuseNightTexture;
 
 out vec3 color;
 
@@ -51,7 +53,15 @@ void main() {
 
   vec3 baseColor = fragmentColor;
   if (useTexture) {
-    baseColor *= vec3(texture(diffuseTexture,fragmentTexture));
+    if (useNightTexture) {
+      if (dot(normal,lightDirection) > 0) {
+	baseColor *= vec3(texture(diffuseDayTexture,fragmentTexture));
+      } else {
+	baseColor *= vec3(texture(diffuseNightTexture,fragmentTexture));
+      }
+    } else {
+    }
+    baseColor *= vec3(texture(diffuseDayTexture,fragmentTexture));
   }
   
   color = (ambientLight + diffuseLight + specularLight) * baseColor;
