@@ -51,9 +51,7 @@ void main() {
 
   vec3 baseColor = fragmentColor;
   if (useTexture) {
-    vec2 uv = vec2(fragmentTexture.s + fragmentTexture.t, fragmentTexture.t);
-    //vec2 uv = vec2((fragmentTexture.s - fragmentTexture.t / 2.0) / (1 - fragmentTexture.t), fragmentTexture.t);
-    baseColor *= vec3(texture(diffuseTexture, uv));
+    baseColor *= vec3(texture(diffuseTexture,fragmentTexture));
   }
   
   color = (ambientLight + diffuseLight + specularLight) * baseColor;

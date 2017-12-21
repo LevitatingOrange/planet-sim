@@ -24,6 +24,7 @@ class Sphere {
   GLuint vertexArray = 0;
   GLuint vertexBuffer = 0;
   std::vector<Vertex> vertices;
+  std::vector<glm::vec3> vectors;
   std::vector<GLuint> indices;
   GLuint indexBuffer = 0;
   glm::vec3 color;
@@ -33,10 +34,10 @@ class Sphere {
   glm::vec3 old_position;
   void initGL();
   void generateMesh();
-  void subdivide(Vertex a, Vertex b, Vertex c, int depth);
+  void subdivide(glm::vec3 a, glm::vec3 b, glm::vec3 c, int depth);
   void reduce();
   void spherify();
-  void completeVertices();
+  void generateVertices();
   void createShape();
 public:
   // physical traits

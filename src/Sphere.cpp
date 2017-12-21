@@ -60,7 +60,9 @@ void Sphere::spherify() {
 
 void Sphere::generateVertices() {
   for (size_t i = 0; i < vectors.size(); i++) {
-    vertices.push_back(Vertex {vectors[i], vectors[i] / radius, color});
+    float latitude = acos(vectors[i].z / radius) / M_PI;
+    float longitude = (atan2(vectors[i].y , vectors[i].x) + M_PI) / (2 * M_PI);
+    vertices.push_back(Vertex {vectors[i], vectors[i] / radius, color, glm::vec2(longitude, latitude)});
   }
 }
 
@@ -69,7 +71,7 @@ void Sphere::createShape() {
   vertices.clear();
   indices.clear();
   generateMesh();
-  reduce();
+  //reduce();
   spherify();
   generateVertices();
 }
@@ -91,6 +93,8 @@ void Sphere::initGL() {
   glVertexAttribPointer(NORMAL_ID, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(GLfloat) * 3));
   glEnableVertexAttribArray(COLOR_ID);
   glVertexAttribPointer(COLOR_ID, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(GLfloat) * 6));
+  glEnableVertexAttribArray(TEXTURE_ID);
+  glVertexAttribPointer(TEXTURE_ID, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(GLfloat) * 9));
   // EBO
   glGenBuffers(1, &indexBuffer);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
