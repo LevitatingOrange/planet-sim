@@ -13,15 +13,12 @@ typedef enum _ErrorLevel {
   ERROR,
 } ErrorLevel;
 
-typedef struct _Vertex {
-  glm::vec3 position;
-  glm::vec3 normal;
-  glm::vec3 color;
-} Vertex;
-
 void log(ErrorLevel lvl, std::string msg);
 void vprint(glm::vec3 vector);
-glm::vec3 midpoint(glm::vec3 a, glm::vec3 b);
+template <typename T>
+inline T midpoint(T a, T b) {
+  return (a + b) * 0.5f;
+}
 glm::vec3 normalize(glm::vec3 a, glm::vec3 b, float length);
 float angle_clip(float angle, float increase);
 #endif

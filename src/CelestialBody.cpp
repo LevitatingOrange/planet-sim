@@ -2,13 +2,15 @@
 
 CelestialBody::CelestialBody(GLuint program, glm::vec3 position, glm::vec3 velocity, float mass,
 			     glm::vec3 color, unsigned int detail, float radius, float rotation, float obliquity,
-			     Parameter material, float shininess):
-  material_id(ParameterID {
-      glGetUniformLocation(program, "materialParameters.ambient"),
-	glGetUniformLocation(program, "materialParameters.diffuse"),
-	glGetUniformLocation(program, "materialParameters.specular"),
-	}),  material(material),  shininess_id(glGetUniformLocation(program, "shininess")), shininess(shininess), 
-  position(position), velocity(velocity), mass(mass) {
+			     Material material, Texture *texture):
+  material_id(MaterialID {
+      glGetUniformLocation(program, "material.ambient"),
+	glGetUniformLocation(program, "material.diffuse"),
+	glGetUniformLocation(program, "material.specular"),
+	glGetUniformLocation(program, "material.shininess"),
+	glGetUniformLocation(program, "material.nonLambertian"),
+	}),  material(material), use_texture_id(glGetUniformLocation(program, "useTexture")),
+  position(position), velocity(velocity), mass(mass), texture(texture) {
   sphere = new Sphere(program, color, detail, radius, rotation, glm::radians(obliquity));
   sphere->update(position);
 }
@@ -20,7 +22,15 @@ void CelestialBody::render() {
   glUniform3fv(material_id.ambient, 1, (GLfloat*) &material.ambient);
   glUniform3fv(material_id.diffuse, 1, (GLfloat*) &material.diffuse);
   glUniform3fv(material_id.specular, 1, (GLfloat*) &material.specular);
-  glUniform1fv(shininess_id, 1, (GLfloat*) &shininess);
+  glUniform1f(material_id.shininess, (GLfloat) material.shininess);
+  glUniform1i(material_id.nonLambertian, (GLint) material.nonLambertian);
+
+  if (texture != nullptr) {
+    glUniform1i(use_texture_id, 1);
+    texture->render();
+  } else {
+    glUniform1i(use_texture_id, 0);
+  }
   sphere->render();
 }
 void CelestialBody::update() {

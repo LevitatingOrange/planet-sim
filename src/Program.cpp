@@ -131,6 +131,9 @@ Program::Program(std::string name, std::string vertex_shader, std::string fragme
   //glViewport(0, 0, width, height);
   //glClearColor(0.0, 0.0, 1.0, 1.0);
 
+  GLfloat borderColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
+  glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);  
+
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
 

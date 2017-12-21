@@ -3,12 +3,12 @@
 Star::Star(GLuint program, glm::vec3 position, glm::vec3 velocity,
 	   float mass, glm::vec3 color, unsigned int detail,
 	   float radius, float rotation, float obliquity,
-	   Parameter material, float shininess, Parameter light):
-  CelestialBody(program, position, velocity, mass, color, detail, radius, rotation, obliquity, material, shininess),
-  light_id(ParameterID {
-      glGetUniformLocation(program, "lightParameters.ambient"),
-	glGetUniformLocation(program, "lightParameters.diffuse"),
-	glGetUniformLocation(program, "lightParameters.specular")}), light(light) {
+	   Material material, Light light, Texture *texture):
+  CelestialBody(program, position, velocity, mass, color, detail, radius, rotation, obliquity, material, texture),
+  light_id(LightID {
+      glGetUniformLocation(program, "light.ambient"),
+	glGetUniformLocation(program, "light.diffuse"),
+	glGetUniformLocation(program, "light.specular")}), light(light) {
 }
 
 void Star::render() {
