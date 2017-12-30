@@ -16,10 +16,10 @@ Universe::Universe(GLuint program, GLuint width, GLuint height, float updateTime
   bodies.push_back(new Star(program, glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 0.0),
 			    100, glm::vec3(1.000, 1.000, 1.000), 8, 5, 0.05, 45,
 			    Material {glm::vec3(1.3), glm::vec3(0.0), glm::vec3(0.0), 0, false},
-			    Light {glm::vec3(1.0),  glm::vec3(1.0), glm::vec3(1.0)}, new Texture(program, "./resources/sun_diffuse4.jpg", nullptr)));
+			    Light {glm::vec3(1.0),  glm::vec3(1.0), glm::vec3(1.0)}, new Texture(program, "./resources/sun_diffuse4.jpg", nullptr, nullptr, nullptr)));
   bodies.push_back(new CelestialBody(program, glm::vec3(15.0, 4.0, 0.0), glm::vec3(0.0, 0.0, 100),
-				     0.00001, glm::vec3(1.000, 1.000, 1.000), 8, 0.5, -0.1, -10,
-				     Material {glm::vec3(0.1), glm::vec3(0.8), glm::vec3(0.4), 10, false},  new Texture(program, "./resources/earth_diffuse_day.jpg", nullptr)));
+				     0.00001, glm::vec3(1.0), 8, 0.5, -0.1, -1,
+				     Material {glm::vec3(0.7), glm::vec3(0.6), glm::vec3(0.4), 28, false},  new Texture(program, "./resources/earth_diffuse_day.jpg", "./resources/earth_diffuse_night.jpg", "./resources/earth_specular.jpg", "./resources/earth_normal_map.jpg")));
 }
 
 Universe::~Universe() {
@@ -88,9 +88,9 @@ void Universe::processInput(GLFWwindow* window) {
   pitch += dy;
 
   // prevent gimbal lock
-  if (pitch == 90.0) {
+  if (pitch >= 90.0) {
     pitch = 89;
-  } else if (pitch == 90) {
+  } else if (pitch <= -90) {
     pitch = -89;
   }
   direction = glm::normalize(glm::vec3(cos(glm::radians(yaw)) * cos(glm::radians(pitch)),

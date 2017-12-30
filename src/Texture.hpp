@@ -6,10 +6,16 @@
 class Texture {
   GLuint diffuse;
   GLuint diffuseNight;
+  GLuint specular;
+  GLuint normalMap;
   bool useNight;
-  GLuint use_night_id;
+  GLuint useNightID;
+  bool useSpecular;
+  GLuint useSpecularID;
+  bool useNormal;
+  GLuint useNormalID;
 public:
-  Texture(GLuint program, const char* diffusePath, const char* diffuseNightPath);
+  Texture(GLuint program, const char* diffusePath, const char* diffuseNightPath, const char* specularPath, const char* normalPath);
   void render();
 };
 
