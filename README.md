@@ -5,7 +5,7 @@ Simply put https://github.com/nothings/stb/blob/master/stb_image.h and https://g
 
 ## TODO
 - [x] player movement
-- [ ] config file parsing
+- [x] config file parsing
 - [x] lighting
 - [ ] multiple light sources
 - [~] lights on the dark side of planets (earth), make ambient light settable
