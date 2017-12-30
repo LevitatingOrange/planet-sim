@@ -16,6 +16,7 @@ class Texture {
   GLuint useNormalID;
 public:
   Texture(GLuint program, const char* diffusePath, const char* diffuseNightPath, const char* specularPath, const char* normalPath);
+  ~Texture();
   void render();
 };
 

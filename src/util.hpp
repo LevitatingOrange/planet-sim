@@ -21,5 +21,6 @@ inline T midpoint(T a, T b) {
 }
 glm::vec3 normalize(glm::vec3 a, glm::vec3 b, float length);
 float angle_clip(float angle, float increase);
+std::string readFile(const char* filePath);
 #endif
 

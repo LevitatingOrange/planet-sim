@@ -99,17 +99,12 @@ void Sphere::initGL() {
   glGenBuffers(1, &indexBuffer);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), &indices[0], GL_STATIC_DRAW);
-  
-#ifdef DEBUG
-  glBindVertexArray(0);
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-#endif
 }
 
 Sphere::Sphere(GLuint program, glm::vec3 color, unsigned int detail, float radius, float rotation_angle, float obliquity) :
-  model_id(glGetUniformLocation(program, "model")), color(color), detail(detail), rotation(glm::rotate(glm::mat4(1.0f), obliquity, glm::vec3(0,0,1))),
+  model_id(glGetUniformLocation(program, "model")), color(color), detail(detail), rotation(glm::rotate(glm::mat4(1.0f), (float) M_PI/2, glm::vec3(1,0,0))),
   translation(glm::mat4(1.0f)), old_position(glm::vec3(0,0,0)), radius(radius), rotation_angle(rotation_angle), obliquity(obliquity) {
+  rotation = glm::rotate(rotation, obliquity, glm::vec3(0,0,1));
   createShape();
   initGL();
 }
@@ -131,14 +126,11 @@ void Sphere::render() {
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
   // FIXME: if indice size changes while rendering this will blow up
   glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)0);
-#ifdef DEBUG
-  glBindVertexArray(0);
-#endif
 }
 
 void Sphere::update(glm::vec3 position) {
   translation = glm::translate(translation, old_position - position);
-  rotation = glm::rotate(rotation, rotation_angle, glm::vec3(0,1,0));
+  rotation = glm::rotate(rotation, rotation_angle, glm::vec3(0,0,1));
   old_position = position;
 }
 

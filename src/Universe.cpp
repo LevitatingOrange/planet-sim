@@ -4,22 +4,14 @@
 #include <cmath>
 #include <iostream>
 
-Universe::Universe(GLuint program, GLuint width, GLuint height, float updateTime):
+Universe::Universe(float g, GLuint program, float updateTime, GLuint width, GLuint height):
   projection_id(glGetUniformLocation(program, "projection")), view_id(glGetUniformLocation(program, "view")),
   view_position_id(glGetUniformLocation(program, "view_position")),
-  g(1), sensitivity(0.05), lastX(width/2), lastY(height/2), eye(glm::vec3(0, 0, 100)),
+  g(g), sensitivity(0.05), lastX(width/2), lastY(height/2), eye(glm::vec3(0, 0, 100)),
   direction(0, 0, -1), camera_up(glm::vec3(0, 1, 0)), yaw(-90), pitch(0), speed_modifier(0.01), speed(1), up(glm::vec3(0, 1, 0)),
-  updateTime(updateTime), running(false), time(0.0), pressed_space(false), pressed_escape(false), pressed_r(false), width(width), height(height) {
+  updateTime(updateTime), running(false), time(0.0), pressed_space(false), pressed_escape(false), pressed_r(false){
   // matrices
   projection = glm::perspective(glm::radians(45.0f), (float) width / (float)height, 0.1f, 200.0f);
-  
-  bodies.push_back(new Star(program, glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 0.0),
-			    100, glm::vec3(1.000, 1.000, 1.000), 8, 5, 0.05, 45,
-			    Material {glm::vec3(1.3), glm::vec3(0.0), glm::vec3(0.0), 0, false},
-			    Light {glm::vec3(1.0),  glm::vec3(1.0), glm::vec3(1.0)}, new Texture(program, "./resources/sun_diffuse4.jpg", nullptr, nullptr, nullptr)));
-  bodies.push_back(new CelestialBody(program, glm::vec3(15.0, 4.0, 0.0), glm::vec3(0.0, 0.0, 100),
-				     0.00001, glm::vec3(1.0), 8, 0.5, -0.1, -1,
-				     Material {glm::vec3(0.7), glm::vec3(0.6), glm::vec3(0.4), 28, false},  new Texture(program, "./resources/earth_diffuse_day.jpg", "./resources/earth_diffuse_night.jpg", "./resources/earth_specular.jpg", "./resources/earth_normal_map.jpg")));
 }
 
 Universe::~Universe() {

@@ -42,11 +42,13 @@ void main() {
   vec3 viewDirection = normalize(viewPosition - fragmentPosition);
 
   vec3 normal;
-  if (useNormalMap) {
-    normal = normalize(fragmentNormal);
-  } else {
-    normal = normalize(texture(normalMap, fragmentTexture).rgb * 2.0 - 1.0);
-  }
+
+  // TODO
+  //if (useNormalMap) {
+  //   normal = normalize(texture(normalMap, fragmentTexture).rgb * 2.0 - 1.0);
+  // } else {
+  normal = normalize(fragmentNormal);
+  //}
   vec3 halfwayDirection = normalize(viewDirection + lightDirection);
   
   vec3 diffuseColor = fragmentColor;

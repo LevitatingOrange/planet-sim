@@ -13,7 +13,7 @@ GLFWwindow* window;
 Universe* universe;
 float updateTime;
 public:
-Program(std::string name, std::string vertex_shader, std::string fragment_shader, GLuint width, GLuint height, float updateTime);
+  Program(std::string name, std::string vertex_shader, std::string fragment_shader, std::string config_path, GLuint width, GLuint height, float updateTime);
   void startMainLoop();
   ~Program();
 };

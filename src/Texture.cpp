@@ -44,6 +44,10 @@ Texture::Texture(GLuint program, const char* diffusePath, const char* diffuseNig
   }
 }
 
+Texture::~Texture() {
+  glDeleteTextures(4, &diffuse);
+}
+
 void Texture::render() {
   glUniform1i(useNightID, useNight);
   glUniform1i(useSpecularID, useSpecular);

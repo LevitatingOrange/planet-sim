@@ -1,7 +1,7 @@
 #include "Program.hpp"
-#include <fstream>
-#include <sstream>
 #include <chrono>
+#include "util.hpp"
+#include "config.hpp"
 
 #ifdef DEBUG
 void _post_call_callback_default(const char *name, void *funcptr, int len_args, ...) {
@@ -14,18 +14,6 @@ void _post_call_callback_default(const char *name, void *funcptr, int len_args, 
 }
 #endif
 
-std::string readFile(const char* filePath) {
-  std::ifstream fileStream(filePath, std::ios::in);
-
-  if (!fileStream.is_open()) {
-    throw std::string("Could not read file");
-  }
-
-  std::string content( (std::istreambuf_iterator<char>(fileStream) ),
-                       (std::istreambuf_iterator<char>()    ) );
-  
-  return content;
-}
 
 GLuint loadShader(const char *vertex_path, const char* fragment_path) {
   GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -97,7 +85,7 @@ GLuint loadShader(const char *vertex_path, const char* fragment_path) {
 }
 
 
-Program::Program(std::string name, std::string vertex_shader, std::string fragment_shader, GLuint width, GLuint height, float updateTime): updateTime(updateTime) {
+Program::Program(std::string name, std::string vertex_shader, std::string fragment_shader, std::string config_path, GLuint width, GLuint height, float updateTime): updateTime(updateTime) {
   if(!glfwInit()) {
     throw std::string("Failed to initialize GLFW");
   }
@@ -138,7 +126,9 @@ Program::Program(std::string name, std::string vertex_shader, std::string fragme
   glDepthFunc(GL_LESS);
 
   // start the universe
-  universe = new Universe(program, width, height, updateTime);
+  //universe = new Universe(1.0, program, updateTime, width, height);
+  universe = readConfig(config_path.c_str(),  program,  updateTime, width, height);
+
 }
 
 // http://gameprogrammingpatterns.com/game-loop.html

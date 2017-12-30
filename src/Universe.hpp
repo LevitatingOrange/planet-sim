@@ -8,7 +8,6 @@ class Universe {
   GLuint view_id;
   GLuint view_position_id;
   
-  std::vector<CelestialBody*> bodies;
   glm::mat4 view;
   glm::mat4 projection;
 
@@ -39,11 +38,9 @@ class Universe {
   bool pressed_escape;
   bool pressed_r;
 
-  // window
-  GLuint width;
-  GLuint height;
 public:
-  Universe(GLuint program, GLuint width, GLuint height, float updateTime);
+  std::vector<CelestialBody*> bodies;
+  Universe(float g, GLuint program, float updateTime, GLuint width, GLuint height);
   ~Universe();
   void render();
   void update();

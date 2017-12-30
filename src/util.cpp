@@ -1,5 +1,7 @@
 #include "util.hpp"
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
 void log(ErrorLevel lvl, std::string msg) {
   switch (lvl) {
@@ -39,4 +41,17 @@ float angle_clip(float angle, float increase) {
       return angle + increase;
     }
   }
+}
+
+std::string readFile(const char* filePath) {
+  std::ifstream fileStream(filePath, std::ios::in);
+
+  if (!fileStream.is_open()) {
+    throw std::string("Could not read file");
+  }
+
+  std::string content( (std::istreambuf_iterator<char>(fileStream) ),
+                       (std::istreambuf_iterator<char>()    ) );
+  
+  return content;
 }
