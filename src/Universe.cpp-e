@@ -4,10 +4,10 @@
 #include <cmath>
 #include <iostream>
 
-Universe::Universe(double g, GLuint program, double timeScale, double updateTime, GLuint width, GLuint height):
+Universe::Universe(double g, GLuint program, float updateTime, GLuint width, GLuint height):
   projection_id(glGetUniformLocation(program, "projection")), view_id(glGetUniformLocation(program, "view")),
   view_position_id(glGetUniformLocation(program, "view_position")),
-  g(g), timeScale(timeScale), sensitivity(0.05), lastX(width/2), lastY(height/2), eye(glm::vec3(14.96, 0, -1)),
+  g(g), sensitivity(0.05), lastX(width/2), lastY(height/2), eye(glm::vec3(14.96, 0, -1)),
   direction(0, 0, -1), camera_up(glm::vec3(0, 1, 0)), yaw(-90), pitch(0), speed_modifier(0.01), speed(0.1), up(glm::vec3(0, 1, 0)),
   updateTime(updateTime), running(false), time(0.0), pressed_space(false), pressed_escape(false), pressed_r(false){
   // matrices
@@ -34,7 +34,7 @@ void Universe::render() {
 }
 
 void Universe::calculate() {
-  double dt = updateTime * timeScale;
+  double dt = updateTime / 10000;
   for (size_t i = 0; i < bodies.size(); i++) {
     auto bi = bodies[i];
 
@@ -42,16 +42,16 @@ void Universe::calculate() {
     bi->position = bi->position + bi->velocity * dt;
 
     // calculate acceleration
-    glm::dvec3 force = glm::dvec3(0,0,0);
+    glm::vec3d force = glm::vec3d(0,0,0);
     for (size_t j = 0; j < bodies.size(); j++) {
       auto bj = bodies[j];
       if (i != j) {
     	force += (g * bi->mass * bj->mass * (bi->position - bj->position)) / 
-    	  ((double) std::pow(glm::distance(bi->position, bj->position), 3));
+    	  (std::pow(glm::distance(bi->position, bj->position), 1.0/3));
       }
     }
-    force = force * -1.0;
-    glm::dvec3 acceleration = force / bi->mass;
+    force = force * -1.0f;
+    glm::vec3d acceleration = force / bi->mass;
 
     // update velocity
     bi->velocity = bi->velocity + acceleration * dt;
@@ -96,31 +96,31 @@ void Universe::processInput(GLFWwindow* window) {
 
 
   if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && bodies.size() >= 1) {
-    eye = bodies[0]->position * bodies[0]->physicsScale;
+    eye = bodies[0]->position;
   }
   if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS && bodies.size() >= 2) {
-    eye = bodies[1]->position * bodies[1]->physicsScale;
+    eye = bodies[1]->position;
   }
   if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS && bodies.size() >= 3) {
-    eye = bodies[2]->position * bodies[2]->physicsScale;
+    eye = bodies[2]->position;
   }
   if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS && bodies.size() >= 4) {
-    eye = bodies[3]->position * bodies[3]->physicsScale;
+    eye = bodies[3]->position;
   }
   if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS && bodies.size() >= 5) {
-    eye = bodies[4]->position * bodies[4]->physicsScale;
+    eye = bodies[4]->position;
   }
   if (glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS && bodies.size() >= 6) {
-    eye = bodies[5]->position * bodies[5]->physicsScale;
+    eye = bodies[5]->position;
   }
   if (glfwGetKey(window, GLFW_KEY_7) == GLFW_PRESS && bodies.size() >= 7) {
-    eye = bodies[6]->position * bodies[6]->physicsScale;
+    eye = bodies[6]->position;
   }
   if (glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS && bodies.size() >= 8) {
-    eye = bodies[7]->position * bodies[7]->physicsScale;
+    eye = bodies[7]->position;
   }
   if (glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS && bodies.size() >= 9) {
-    eye = bodies[8]->position * bodies[8]->physicsScale;
+    eye = bodies[8]->position;
   }
   
   if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {

@@ -1,6 +1,6 @@
 #include "CelestialBody.hpp"
 
-CelestialBody::CelestialBody(GLuint program, double physicsScale, glm::dvec3 position, glm::dvec3 velocity, double mass,
+CelestialBody::CelestialBody(GLuint program, double pyhsicsScale, glm::vec3d position, glm::vec3d velocity, double mass,
 			     glm::vec3 color, unsigned int detail, float radius, float rotation, float obliquity,
 			     Material material, Texture *texture):
   physicsScale(physicsScale), material_id(MaterialID {

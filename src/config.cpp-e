@@ -51,12 +51,12 @@ glm::vec3 get_vec3(Value& b, const char* name, float def) {
     my_assert(arr[0].IsDouble(), "expected double in vector (pos 0) in " + std::string(name));
     my_assert(arr[1].IsDouble(), "expected double in vector (pos 1) in " + std::string(name));
     my_assert(arr[2].IsDouble(), "expected double in vector (pos 2) in " + std::string(name));
-    return glm::dvec3(arr[0].GetDouble(), arr[1].GetDouble(),  arr[2].GetDouble());
+    return glm::vec3(arr[0].GetDouble(), arr[1].GetDouble(),  arr[2].GetDouble());
   } else {
-    return glm::dvec3(def);
+    return glm::vec3(def);
   }
 }
-glm::dvec3 get_scaled_vec3(Value& b, const char* name, double def, double scale) {
+glm::vec3d get_scaled_vec3(Value& b, const char* name, double def, double scale) {
   if (b.HasMember(name) && b[name].IsArray()) {
     auto arr = b[name].GetArray();
     if (arr.Size() != 3) {
@@ -65,9 +65,9 @@ glm::dvec3 get_scaled_vec3(Value& b, const char* name, double def, double scale)
     my_assert(arr[0].IsDouble(), "expected double in vector (pos 0) in " + std::string(name));
     my_assert(arr[1].IsDouble(), "expected double in vector (pos 1) in " + std::string(name));
     my_assert(arr[2].IsDouble(), "expected double in vector (pos 2) in " + std::string(name));
-    return glm::dvec3(arr[0].GetDouble(), arr[1].GetDouble(), arr[2].GetDouble());
+    return glm::vec3d(arr[0].GetDouble(), arr[1].GetDouble() arr[2].GetDouble());
   } else {
-    return glm::dvec3(def);
+    return glm::vec3d(def);
   }
 }
 
@@ -89,13 +89,13 @@ Universe* readConfig(const char* configPath, GLuint program, float updateTime, G
   double timeScale = get_doubleb(document, "timeScale", 1.0);
   double g = get_doubleb(document, "g", 1.0);
 
-  Universe* u = new Universe(g, program, timeScale, updateTime, width, height);
+  Universe* u = new Universe(g, program, updateTime, width, height);
 
   for (auto& b : document["bodies"].GetArray()) {
     my_assert(b.IsObject(), "All bodies have to be objects");
     
-    glm::dvec3 position = get_scaled_vec3(b, "position", 0.0, physicsScale);
-    glm::dvec3 velocity = get_scaled_vec3(b, "velocity", 0.0, physicsScale);
+    glm::vec3d position = get_scaled_vec3(b, "position", 0.0, physicsScale);
+    glm::vec3d velocity = get_scaled_vec3(b, "velocity", 0.0, physicsScale);
     double mass = get_doubleb(b, "mass", 0.0);
     glm::vec3 color = glm::vec3(1.0);
     unsigned int detail = get_uint(b, "detail", 0);

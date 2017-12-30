@@ -13,7 +13,6 @@ class Universe {
 
   // physics
   double g;
-  double timeScale;
 
   // mouse
   float sensitivity;
@@ -31,7 +30,7 @@ class Universe {
 
   // world
   glm::vec3 up;
-
+  
   float updateTime;
   bool running;
   float time;
@@ -41,7 +40,7 @@ class Universe {
 
 public:
   std::vector<CelestialBody*> bodies;
-  Universe(double g, GLuint program, double timeScale, double updateTime, GLuint width, GLuint height);
+  Universe(double g, GLuint program, float updateTime, GLuint width, GLuint height);
   ~Universe();
   void render();
   void update();

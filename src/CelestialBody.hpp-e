@@ -40,14 +40,14 @@ public:
   Material material;
   GLuint use_texture_id;
   
-  glm::dvec3 position;
-  glm::dvec3 velocity;
+  glm::vec3d position;
+  glm::vec3d velocity;
   double mass;
   Sphere *sphere;
 
   Texture *texture;
 
-  CelestialBody(GLuint program, double physicsScale, glm::dvec3 position, glm::dvec3 velocity,
+  CelestialBody(GLuint program, double physicsScale, glm::vec3d position, glm::vec3d velocity,
 		double mass, glm::vec3 color, unsigned int detail,
 		float radius, float rotation, float obliquity,
 		Material material, Texture *texture);
