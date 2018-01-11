@@ -7,8 +7,8 @@
 Universe::Universe(double g, GLuint program, double timeScale, double updateTime, GLuint width, GLuint height):
   projection_id(glGetUniformLocation(program, "projection")), view_id(glGetUniformLocation(program, "view")),
   view_position_id(glGetUniformLocation(program, "view_position")),
-  g(g), timeScale(timeScale), sensitivity(0.05), lastX(width/2), lastY(height/2), eye(glm::vec3(14.96, 0, -1)),
-  direction(0, 0, -1), camera_up(glm::vec3(0, 1, 0)), yaw(-90), pitch(0), speed_modifier(0.01), speed(0.1), up(glm::vec3(0, 1, 0)),
+  g(g), timeScale(timeScale), sensitivity(0.05), lastX(width/2), lastY(height/2), eye(glm::vec3(0, 30, 0)),
+  direction(0, -1, 0), camera_up(glm::vec3(0, 0, 1)), yaw(-90), pitch(0), speed_modifier(0.01), speed(0.1), up(glm::vec3(0, 1, 0)),
   updateTime(updateTime), running(false), time(0.0), pressed_space(false), pressed_escape(false), pressed_r(false){
   // matrices
   projection = glm::perspective(glm::radians(45.0f), (float) width / (float)height, 0.1f, 200.0f);
@@ -42,16 +42,17 @@ void Universe::calculate() {
     bi->position = bi->position + bi->velocity * dt;
 
     // calculate acceleration
+    //std::cout << "Object " << i << ": " << std::endl;
     glm::dvec3 force = glm::dvec3(0,0,0);
     for (size_t j = 0; j < bodies.size(); j++) {
       auto bj = bodies[j];
       if (i != j) {
-    	force += (g * bi->mass * bj->mass * (bi->position - bj->position)) / 
-    	  ((double) std::pow(glm::distance(bi->position, bj->position), 3));
+    	force += (bj->mass * (bi->position - bj->position)) / 
+    	  std::pow(glm::distance(bi->position, bj->position), 3);
       }
+      //std::cout << "    to Object " << j << " " << std::pow(glm::distance(bi->position, bj->position), 3) << std::endl;
     }
-    force = force * -1.0;
-    glm::dvec3 acceleration = force / bi->mass;
+    glm::dvec3 acceleration = g * force * -1.0;
 
     // update velocity
     bi->velocity = bi->velocity + acceleration * dt;
@@ -62,7 +63,7 @@ void Universe::update() {
   if (running) {
     for (size_t i = 0; i < bodies.size(); i++) {
       calculate();
-      bodies[i]->update();
+      bodies[i]->update(updateTime * timeScale);
     }
     time += updateTime;
   }

@@ -12,7 +12,7 @@ CelestialBody::CelestialBody(GLuint program, double physicsScale, glm::dvec3 pos
 	}),  material(material), use_texture_id(glGetUniformLocation(program, "useTexture")),
   position(position), velocity(velocity), mass(mass), texture(texture) {
   sphere = new Sphere(program, color, detail, radius, rotation, glm::radians(obliquity));
-  sphere->update(position * physicsScale);
+  sphere->update(position * physicsScale, 1.0);
 }
 
 CelestialBody::~CelestialBody() {
@@ -33,7 +33,7 @@ void CelestialBody::render() {
   }
   sphere->render();
 }
-void CelestialBody::update() {
-  sphere->update(position * physicsScale);
+void CelestialBody::update(double timeScale) {
+  sphere->update(position * physicsScale, timeScale);
 }
  

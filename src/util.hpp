@@ -15,6 +15,7 @@ typedef enum _ErrorLevel {
 
 void log(ErrorLevel lvl, std::string msg);
 void vprint(glm::vec3 vector);
+void vdprint(glm::dvec3 vector);
 template <typename T>
 inline T midpoint(T a, T b) {
   return (a + b) * 0.5f;

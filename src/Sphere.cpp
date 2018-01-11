@@ -128,9 +128,9 @@ void Sphere::render() {
   glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)0);
 }
 
-void Sphere::update(glm::vec3 position) {
+void Sphere::update(glm::vec3 position, double scale) {
   translation = glm::translate(translation, old_position - position);
-  rotation = glm::rotate(rotation, rotation_angle, glm::vec3(0,0,1));
+  rotation = glm::rotate(rotation, rotation_angle * (float) scale, glm::vec3(0,0,1));
   old_position = position;
 }
 

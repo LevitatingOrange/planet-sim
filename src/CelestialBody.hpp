@@ -53,7 +53,7 @@ public:
 		Material material, Texture *texture);
   ~CelestialBody();
   virtual void render();
-  virtual void update();
+  virtual void update(double timeScale);
 };
 
 #endif

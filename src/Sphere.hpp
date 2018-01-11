@@ -48,6 +48,6 @@ public:
   Sphere(GLuint program, glm::vec3 color, unsigned int detail, float radius, float rotation_angle, float obliquity);
   ~Sphere();
   void render();
-  void update(glm::vec3 position);
+  void update(glm::vec3 position, double scale);
 };
 #endif

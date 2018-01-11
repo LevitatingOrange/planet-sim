@@ -56,7 +56,7 @@ glm::vec3 get_vec3(Value& b, const char* name, float def) {
     return glm::dvec3(def);
   }
 }
-glm::dvec3 get_scaled_vec3(Value& b, const char* name, double def, double scale) {
+glm::dvec3 get_dvec3(Value& b, const char* name, double def, double scale) {
   if (b.HasMember(name) && b[name].IsArray()) {
     auto arr = b[name].GetArray();
     if (arr.Size() != 3) {
@@ -86,7 +86,8 @@ Universe* readConfig(const char* configPath, GLuint program, float updateTime, G
   my_assert(document.HasMember("bodies") && document["bodies"].IsArray(), "Config file missing array");
 
   double physicsScale = get_doubleb(document, "physicsScale", 1.0);
-  double timeScale = get_doubleb(document, "timeScale", 1.0);
+  double radiiScale = get_doubleb(document, "radiiScale", physicsScale);
+  double timeScale = get_doubleb(document, "timeScale", physicsScale);
   double g = get_doubleb(document, "g", 1.0);
 
   Universe* u = new Universe(g, program, timeScale, updateTime, width, height);
@@ -94,12 +95,12 @@ Universe* readConfig(const char* configPath, GLuint program, float updateTime, G
   for (auto& b : document["bodies"].GetArray()) {
     my_assert(b.IsObject(), "All bodies have to be objects");
     
-    glm::dvec3 position = get_scaled_vec3(b, "position", 0.0, physicsScale);
-    glm::dvec3 velocity = get_scaled_vec3(b, "velocity", 0.0, physicsScale);
+    glm::dvec3 position = get_dvec3(b, "position", 0.0, physicsScale);
+    glm::dvec3 velocity = get_dvec3(b, "velocity", 0.0, physicsScale);
     double mass = get_doubleb(b, "mass", 0.0);
     glm::vec3 color = glm::vec3(1.0);
     unsigned int detail = get_uint(b, "detail", 0);
-    float radius = (float) (get_doubleb(b, "radius", 1.0));
+    float radius = (float) (radiiScale * get_doubleb(b, "radius", 1.0));
     float rotation = get_double(b, "rotation", 0.0);
     float obliquity = get_double(b, "obliquity", 0.0);
     Material material = {glm::vec3(1.0), glm::vec3(1.0), glm::vec3(1.0), 1, false};
