@@ -59,3 +59,72 @@ std::string readFile(const char* filePath) {
   
   return content;
 }
+
+GLuint loadShader(const char *vertex_path, const char* fragment_path) {
+  GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+  GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+
+  std::string vertexShaderSource = readFile(vertex_path);
+  std::string fragmentShaderSource = readFile(fragment_path);
+
+  const char* c_vertexShaderSource = vertexShaderSource.c_str();
+  const char* c_fragmentShaderSource = fragmentShaderSource.c_str();
+
+  GLint result = GL_FALSE;
+  int logLength;
+
+  // compile vertex shader
+  glShaderSource(vertexShader, 1, &c_vertexShaderSource, NULL);
+  glCompileShader(vertexShader);
+  // check for errors
+  glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &result);
+  glGetShaderiv(vertexShader, GL_INFO_LOG_LENGTH, &logLength);
+  if (logLength > 1) {
+    std::vector<char> vertexShaderError(logLength);
+    glGetShaderInfoLog(vertexShader, logLength, NULL, vertexShaderError.data());
+    if (result == GL_TRUE) {
+      log(WARNING, std::string(vertexShaderError.data()));
+    } else {
+      throw std::string("Could not compile vertex shader: ") + std::string(vertexShaderError.data());
+    }
+  }
+
+  // compile fragment shader
+  glShaderSource(fragmentShader, 1, &c_fragmentShaderSource, NULL);
+  glCompileShader(fragmentShader);
+  // check for errors
+  glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &result);
+  glGetShaderiv(fragmentShader, GL_INFO_LOG_LENGTH, &logLength);
+  if (logLength > 1) {
+    std::vector<char> fragmentShaderError(logLength);
+    glGetShaderInfoLog(fragmentShader, logLength, NULL, fragmentShaderError.data());
+    if (result == GL_TRUE) {
+      log(WARNING, std::string(fragmentShaderError.data()));
+    } else {
+      throw std::string("Could not compile fragment shader: ") + std::string(fragmentShaderError.data());
+    }
+  }
+
+  // create program and link shaders
+  GLuint program = glCreateProgram();
+  glAttachShader(program, vertexShader);
+  glAttachShader(program, fragmentShader);
+  glLinkProgram(program);
+  // check for errors
+  glGetProgramiv(program, GL_LINK_STATUS, &result);
+  glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
+  if (logLength > 1) {
+    std::vector<char> programError(logLength);
+    glGetProgramInfoLog(program, logLength, NULL, programError.data());
+    if (result == GL_TRUE) {
+      log(WARNING, std::string(programError.data()));
+    } else {
+      throw std::string("Could not link program: ") + std::string(programError.data());
+
+    }
+  }
+  glDeleteShader(vertexShader);
+  glDeleteShader(fragmentShader);
+
+  return program;
+}
