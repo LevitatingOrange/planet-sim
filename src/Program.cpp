@@ -14,14 +14,15 @@ void _post_call_callback_default(const char *name, void *funcptr, int len_args, 
 }
 #endif
 
-Program::Program(std::string name, std::string vertex_shader, std::string fragment_shader, std::string config_path, GLuint width, GLuint height, float updateTime): updateTime(updateTime) {
+Program::Program(std::string name, std::string vertex_shader, std::string tess_control_shader, std::string tess_eval_shader, std::string fragment_shader,
+		 std::string config_path, GLuint width, GLuint height, float updateTime): updateTime(updateTime) {
   if(!glfwInit()) {
     throw std::string("Failed to initialize GLFW");
   }
 
   glfwWindowHint(GLFW_SAMPLES, 4); // 4x antialiasing
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL 
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
 
@@ -42,7 +43,7 @@ Program::Program(std::string name, std::string vertex_shader, std::string fragme
   glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  
   
-  GLuint program = loadShader(vertex_shader.c_str(), fragment_shader.c_str());
+  GLuint program = createProgram(vertex_shader.c_str(), tess_control_shader.c_str(), tess_eval_shader.c_str(), fragment_shader.c_str());
   glUseProgram(program);
   
   //glViewport(0, 0, width, height);

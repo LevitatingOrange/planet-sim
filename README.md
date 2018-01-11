@@ -15,4 +15,6 @@ Simply put https://github.com/nothings/stb/blob/master/stb_image.h and https://g
 - [ ] ellipsoids instead of spheres
 - [ ] delta time in rendering and camera movement (maybe move input processing into update phase?)
 - [ ] Skybox
-- [ ] Tessellation Shader
+- [x] Tessellation Shader
+- [ ] orbits
+- [ ] fps counter

@@ -1,4 +1,4 @@
-#version 330 core
+#version 400 core
 
 struct Light {
   vec3 ambient;
@@ -21,10 +21,9 @@ uniform vec3 viewPosition;
 uniform Light light;
 uniform Material material;
 
-in vec3 fragmentPosition;
-in vec3 fragmentNormal;
-in vec3 fragmentColor;
-in vec2 fragmentTexture;
+in vec3 tessEvalPosition;
+in vec3 tessEvalNormal;
+in vec2 tessEvalTextureCoord;
 
 uniform bool useTexture;
 uniform bool useNightTexture;
@@ -38,32 +37,38 @@ uniform sampler2D normalMap;
 out vec3 color;
 
 void main() {
-  vec3 lightDirection = normalize(lightPosition - fragmentPosition);
-  vec3 viewDirection = normalize(viewPosition - fragmentPosition);
+  vec3 lightDirection = normalize(lightPosition - tessEvalPosition);
+  vec3 viewDirection = normalize(viewPosition - tessEvalPosition);
 
   vec3 normal;
 
   // TODO
   //if (useNormalMap) {
-  //   normal = normalize(texture(normalMap, fragmentTexture).rgb * 2.0 - 1.0);
+  //   normal = normalize(texture(normalMap, tessEvalTextureCoord;).rgb * 2.0 - 1.0);
   // } else {
-  normal = normalize(fragmentNormal);
+  normal = normalize(tessEvalNormal);
   //}
+
+  if (tessEvalNormal == vec3(0,0,0)) {
+    color = vec3(1.0,1.0,1.0);
+    return;
+  }
+  
   vec3 halfwayDirection = normalize(viewDirection + lightDirection);
   
-  vec3 diffuseColor = fragmentColor;
+  vec3 diffuseColor = vec3(1.0,1.0,1.0);
   vec3 ambientLight;
   if (useTexture) {
     if (useNightTexture) {
       if (dot(normal,lightDirection) > 0) {
-	diffuseColor *= vec3(texture(diffuseDayTexture,fragmentTexture));
+	diffuseColor *= vec3(texture(diffuseDayTexture,tessEvalTextureCoord));
       } else {
 	// because night maps are already dark
 	ambientLight = light.ambient * (material.ambient + vec3(0.2));
-	diffuseColor *= vec3(texture(diffuseNightTexture,fragmentTexture));
+	diffuseColor *= vec3(texture(diffuseNightTexture,tessEvalTextureCoord));
       }
     } else {
-      diffuseColor *= vec3(texture(diffuseDayTexture,fragmentTexture));
+      diffuseColor *= vec3(texture(diffuseDayTexture,tessEvalTextureCoord));
       ambientLight = light.ambient * material.ambient;
     }
   } else {
@@ -83,7 +88,7 @@ void main() {
   vec3 specularLight = light.specular * material.specular * specular;
 
   if (useSpecularTexture) {
-    vec3 specularColor = vec3(texture(specularTexture, fragmentTexture));
+    vec3 specularColor = vec3(texture(specularTexture, tessEvalTextureCoord));
     color = (ambientLight + diffuseLight) * diffuseColor + specularLight * specularColor * diffuseColor;
   } else {
     color = (ambientLight + diffuseLight + specularLight) * diffuseColor;
