@@ -130,10 +130,10 @@ Universe* readConfig(const char* configPath, GLuint program, float updateTime, G
 
     if (b.HasMember("isStar") && b["isStar"].IsBool() && b["isStar"].GetBool()) {
       u->bodies.push_back(new Star(program, physicsScale, position, velocity, mass, color, detail, radius, rotation, obliquity, material, light,
-				   new Texture(program, diffusePath, diffuseNightPath, specularPath, normalPath)));
+				   diffusePath != nullptr? new Texture(program, diffusePath, diffuseNightPath, specularPath, normalPath) : nullptr));
     } else {
       u->bodies.push_back(new CelestialBody(program, physicsScale, position, velocity, mass, color, detail, radius, rotation, obliquity, material,
-					    new Texture(program, diffusePath, diffuseNightPath, specularPath, normalPath)));
+					    diffusePath != nullptr? new Texture(program, diffusePath, diffuseNightPath, specularPath, normalPath) : nullptr));
     }
   }
   return u;
