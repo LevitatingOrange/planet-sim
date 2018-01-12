@@ -99,7 +99,6 @@ Universe* readConfig(const char* configPath, GLuint program, float updateTime, G
     glm::dvec3 velocity = get_dvec3(b, "velocity", 0.0, physicsScale);
     double mass = get_doubleb(b, "mass", 0.0);
     glm::vec3 color = glm::vec3(1.0);
-    unsigned int detail = get_uint(b, "detail", 0);
     float radius = (float) (radiiScale * get_doubleb(b, "radius", 1.0));
     float rotation = get_double(b, "rotation", 0.0);
     float obliquity = get_double(b, "obliquity", 0.0);
@@ -129,10 +128,10 @@ Universe* readConfig(const char* configPath, GLuint program, float updateTime, G
     }
 
     if (b.HasMember("isStar") && b["isStar"].IsBool() && b["isStar"].GetBool()) {
-      u->bodies.push_back(new Star(program, physicsScale, position, velocity, mass, color, detail, radius, rotation, obliquity, material, light,
+      u->bodies.push_back(new Star(program, physicsScale, position, velocity, mass, color, radius, rotation, obliquity, material, light,
 				   diffusePath != nullptr? new Texture(program, diffusePath, diffuseNightPath, specularPath, normalPath) : nullptr));
     } else {
-      u->bodies.push_back(new CelestialBody(program, physicsScale, position, velocity, mass, color, detail, radius, rotation, obliquity, material,
+      u->bodies.push_back(new CelestialBody(program, physicsScale, position, velocity, mass, color, radius, rotation, obliquity, material,
 					    diffusePath != nullptr? new Texture(program, diffusePath, diffuseNightPath, specularPath, normalPath) : nullptr));
     }
   }

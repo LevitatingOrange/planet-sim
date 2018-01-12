@@ -29,7 +29,7 @@ void Universe::render() {
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   for (size_t i = 0; i < bodies.size(); i++) {
-    bodies[i]->render();
+    bodies[i]->render(eye);
   }
 }
 

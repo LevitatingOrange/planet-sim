@@ -21,8 +21,8 @@ void Sphere::initGL() {
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 }
 
-Sphere::Sphere(GLuint program, glm::vec3 color, unsigned int detail, float radius, float rotation_angle, float obliquity) :
-  model_id(glGetUniformLocation(program, "model")), radius_id(glGetUniformLocation(program, "radius")), color(color), detail(detail),
+Sphere::Sphere(GLuint program, glm::vec3 color, float radius, float rotation_angle, float obliquity) :
+  model_id(glGetUniformLocation(program, "model")), radius_id(glGetUniformLocation(program, "radius")), detail_id(glGetUniformLocation(program, "detail")), color(color),
   rotation(glm::rotate(glm::mat4(1.0f), (float) M_PI/2, glm::vec3(1,0,0))),
   translation(glm::mat4(1.0f)), old_position(glm::vec3(0,0,0)), radius(radius), rotation_angle(rotation_angle), obliquity(obliquity) {
   rotation = glm::rotate(rotation, obliquity, glm::vec3(0,0,1));
@@ -38,10 +38,16 @@ Sphere::~Sphere() {
   }
 }
 
-void Sphere::render() {
+void Sphere::render(glm::vec3 viewPosition) {
   glm::mat4 model = translation * rotation;
   glUniformMatrix4fv(model_id, 1, GL_FALSE, &model[0][0]);
   glUniform1f(radius_id, radius);
+
+  unsigned int detail = floor(1/glm::distance(old_position, viewPosition) * DETAIL_MULT);
+  detail = fmin(detail, MAX_DETAIL);
+  detail = fmax(detail, MIN_DETAIL);
+
+  glUniform1ui(detail_id, detail);
   
   glBindVertexArray(vertexArray);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);

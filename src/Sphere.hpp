@@ -10,6 +10,10 @@
 #define COLOR_ID 2
 #define TEXTURE_ID 3
 
+#define MAX_DETAIL 500
+#define MIN_DETAIL 10
+#define DETAIL_MULT 1000
+
 // coordinates taken from http://prideout.net/blog/?p=48
 const int indices[] = {
   2, 1, 0,
@@ -53,12 +57,12 @@ const float vertices[] = {
 class Sphere {
   GLuint model_id;
   GLuint radius_id;
+  GLuint detail_id;
   
   GLuint vertexArray = 0;
   GLuint vertexBuffer = 0;
   GLuint indexBuffer = 0;
   glm::vec3 color;
-  unsigned int detail;
   glm::mat4 rotation;
   glm::mat4 translation;
   glm::vec3 old_position;
@@ -71,9 +75,9 @@ public:
   float rotation_angle;
   float obliquity;
   
-  Sphere(GLuint program, glm::vec3 color, unsigned int detail, float radius, float rotation_angle, float obliquity);
+  Sphere(GLuint program, glm::vec3 color, float radius, float rotation_angle, float obliquity);
   ~Sphere();
-  void render();
+  void render(glm::vec3 viewPosition);
   void update(glm::vec3 position, double scale);
 };
 #endif
