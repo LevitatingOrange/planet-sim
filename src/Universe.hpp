@@ -1,44 +1,32 @@
 #include "CelestialBody.hpp"
+#include "Camera.hpp"
 
 #ifndef UNIVERSE_H
 #define UNIVERSE_H
 
+typedef enum _CameraMode {
+  GLOBAL,
+  LOCAL
+} CameraMode;
+
 class Universe {
   GLuint projection_id;
-  GLuint view_id;
-  GLuint view_position_id;
   
-  glm::mat4 view;
   glm::mat4 projection;
 
   // physics
   double g;
   double timeScale;
 
-  // mouse
-  float sensitivity;
-  float lastX;
-  float lastY;
-
-  // player
-  glm::vec3 eye;
-  glm::vec3 direction;
-  glm::vec3 camera_up;
-  float yaw;
-  float pitch;
-  float speed_modifier;
-  float speed;
-
-  // world
-  glm::vec3 up;
+  // camera
+  Camera* camera;
 
   float updateTime;
   bool running;
   float time;
   bool pressed_space;
   bool pressed_escape;
-  bool pressed_r;
-
+  
 public:
   std::vector<CelestialBody*> bodies;
   Universe(double g, GLuint program, double timeScale, double updateTime, GLuint width, GLuint height);
