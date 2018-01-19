@@ -1,7 +1,5 @@
 #include "Program.hpp"
 #include <chrono>
-#include "util.hpp"
-#include "config.hpp"
 
 #ifdef DEBUG
 void _post_call_callback_default(const char *name, void *funcptr, int len_args, ...) {
@@ -14,8 +12,7 @@ void _post_call_callback_default(const char *name, void *funcptr, int len_args, 
 }
 #endif
 
-Program::Program(std::string name, std::string vertex_shader, std::string tess_control_shader, std::string tess_eval_shader, std::string fragment_shader,
-		 std::string config_path, GLuint width, GLuint height, float updateTime): updateTime(updateTime) {
+Program::Program(std::string name, std::string config_path, GLuint width, GLuint height, float updateTime): updateTime(updateTime) {
   if(!glfwInit()) {
     throw std::string("Failed to initialize GLFW");
   }
@@ -42,10 +39,7 @@ Program::Program(std::string name, std::string vertex_shader, std::string tess_c
 
   glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  
-  
-  GLuint program = createProgram(vertex_shader.c_str(), tess_control_shader.c_str(), tess_eval_shader.c_str(), fragment_shader.c_str());
-  glUseProgram(program);
-  
+
   //glViewport(0, 0, width, height);
   //glClearColor(0.0, 0.0, 1.0, 1.0);
 
@@ -57,7 +51,7 @@ Program::Program(std::string name, std::string vertex_shader, std::string tess_c
 
   // start the universe
   //universe = new Universe(1.0, program, updateTime, width, height);
-  universe = readConfig(config_path.c_str(),  program,  updateTime, width, height);
+  universe = readConfig(config_path.c_str(), updateTime, width, height);
 
 }
 

@@ -1,7 +1,7 @@
 #include <vector>
 #include <string>
 #include <tuple>
-#include "gl_headers.hpp"
+#include "headers.h"
 #include <glm/gtc/epsilon.hpp>
 #include <glm/glm.hpp>
 

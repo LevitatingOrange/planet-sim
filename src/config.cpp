@@ -1,7 +1,4 @@
 #include "config.hpp"
-#include "util.hpp"
-#include "CelestialBody.hpp"
-#include "Star.hpp"
 #include <vector>
 #include <iostream>
 #include <rapidjson/rapidjson.h>
@@ -79,7 +76,7 @@ const char* get_str(Value& b, const char* name, char* def) {
   }
 }
 
-Universe* readConfig(const char* configPath, GLuint program, float updateTime, GLuint width, GLuint height) {
+Universe* readConfig(const char* configPath, float updateTime, GLuint width, GLuint height) {
   Document document;
   document.Parse(readFile(configPath).c_str());
   my_assert(document.IsObject(), "Config file malformed, root has to be object");
@@ -90,8 +87,8 @@ Universe* readConfig(const char* configPath, GLuint program, float updateTime, G
   double timeScale = get_doubleb(document, "timeScale", physicsScale);
   double g = get_doubleb(document, "g", 1.0);
 
-  Universe* u = new Universe(g, program, timeScale, updateTime, width, height);
-
+  Universe* u = new Universe(g, timeScale, updateTime, width, height);
+  
   for (auto& b : document["bodies"].GetArray()) {
     my_assert(b.IsObject(), "All bodies have to be objects");
     
@@ -128,11 +125,11 @@ Universe* readConfig(const char* configPath, GLuint program, float updateTime, G
     }
 
     if (b.HasMember("isStar") && b["isStar"].IsBool() && b["isStar"].GetBool()) {
-      u->bodies.push_back(new Star(program, physicsScale, position, velocity, mass, color, radius, rotation, obliquity, material, light,
-				   diffusePath != nullptr? new Texture(program, diffusePath, diffuseNightPath, specularPath, normalPath) : nullptr));
+      u->bodies.push_back(new Star(u->mainShader, physicsScale, position, velocity, mass, color, radius, rotation, obliquity, material, light,
+				   diffusePath != nullptr? new Texture(u->mainShader, diffusePath, diffuseNightPath, specularPath, normalPath) : nullptr));
     } else {
-      u->bodies.push_back(new CelestialBody(program, physicsScale, position, velocity, mass, color, radius, rotation, obliquity, material,
-					    diffusePath != nullptr? new Texture(program, diffusePath, diffuseNightPath, specularPath, normalPath) : nullptr));
+      u->bodies.push_back(new CelestialBody(u->mainShader, physicsScale, position, velocity, mass, color, radius, rotation, obliquity, material,
+					    diffusePath != nullptr? new Texture(u->mainShader, diffusePath, diffuseNightPath, specularPath, normalPath) : nullptr));
     }
   }
   return u;

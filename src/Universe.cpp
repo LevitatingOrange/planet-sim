@@ -1,16 +1,15 @@
 #include "Universe.hpp"
-#include "Star.hpp"
-#include "CelestialBody.hpp"
 #include <cmath>
 #include <iostream>
 
-Universe::Universe(double g, GLuint program, double timeScale, double updateTime, GLuint width, GLuint height):
-  projection_id(glGetUniformLocation(program, "projection")),
+Universe::Universe(double g, double timeScale, double updateTime, GLuint width, GLuint height):
   g(g), timeScale(timeScale), updateTime(updateTime), running(false),
   time(0.0), pressed_space(false), pressed_escape(false) {
   // matrices
+  mainShader = new MainShader();
+  mainShader->use();
   projection = glm::perspective(glm::radians(45.0f), (float) width / (float)height, 0.1f, 200.0f);
-  camera = new GlobalCamera(program, &bodies);
+  camera = new GlobalCamera(mainShader, &bodies);
 }
 
 Universe::~Universe() {
@@ -21,8 +20,8 @@ Universe::~Universe() {
 void Universe::render() {
 
   camera->render();
-  
-  glUniformMatrix4fv(projection_id, 1, GL_FALSE, &projection[0][0]);
+
+  mainShader->setProjection(projection);
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   for (size_t i = 0; i < bodies.size(); i++) {
@@ -69,7 +68,7 @@ void Universe::update() {
 
 
 void Universe::processInput(GLFWwindow* window) {
-
+  
   camera->processInput(window);
 
   if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {

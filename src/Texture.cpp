@@ -24,23 +24,18 @@ void generateTexture(const char* path, GLuint* texture) {
   stbi_image_free(data);
 }
 
-Texture::Texture(GLuint program, const char* diffusePath, const char* diffuseNightPath, const char* specularPath, const char* normalPath):
-  useNight(diffuseNightPath != nullptr), useNightID(glGetUniformLocation(program, "useNightTexture")),
-  useSpecular(specularPath != nullptr), useSpecularID(glGetUniformLocation(program, "useSpecularTexture")),
-  useNormal(normalPath != nullptr), useNormalID(glGetUniformLocation(program, "useNormalMap")) {
+Texture::Texture(MainShader* mainShader, const char* diffusePath, const char* diffuseNightPath, const char* specularPath, const char* normalPath):
+  mainShader(mainShader), useNight(diffuseNightPath != nullptr),
+  useSpecular(specularPath != nullptr), useNormal(normalPath != nullptr) {
   generateTexture(diffusePath, &diffuse);
-  glUniform1i(glGetUniformLocation(program, "diffuseDayTexture"), 0);
   if (useNight) {
     generateTexture(diffuseNightPath, &diffuseNight);
-    glUniform1i(glGetUniformLocation(program, "diffuseNightTexture"), 1);
   }
   if (useSpecular) {
     generateTexture(specularPath, &specular);
-    glUniform1i(glGetUniformLocation(program, "specularTexture"), 2);
   }
   if (useNormal) {
     generateTexture(normalPath, &normalMap);
-    glUniform1i(glGetUniformLocation(program, "normalMap"), 2);
   }
 }
 
@@ -49,9 +44,8 @@ Texture::~Texture() {
 }
 
 void Texture::render() {
-  glUniform1i(useNightID, useNight);
-  glUniform1i(useSpecularID, useSpecular);
-  glUniform1i(useNormalID, useNormal);
+  mainShader->setTextureIDs(useNight, useSpecular, useNormal);
+  mainShader->setTextureSettings(useNight, useSpecular, useNormal);
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, diffuse);
   if (useNight) {

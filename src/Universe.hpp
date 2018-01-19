@@ -1,5 +1,4 @@
-#include "CelestialBody.hpp"
-#include "Camera.hpp"
+#include "headers.h"
 
 #ifndef UNIVERSE_H
 #define UNIVERSE_H
@@ -10,8 +9,9 @@ typedef enum _CameraMode {
 } CameraMode;
 
 class Universe {
-  GLuint projection_id;
-  
+public:
+  MainShader* mainShader;
+private:
   glm::mat4 projection;
 
   // physics
@@ -29,7 +29,7 @@ class Universe {
   
 public:
   std::vector<CelestialBody*> bodies;
-  Universe(double g, GLuint program, double timeScale, double updateTime, GLuint width, GLuint height);
+  Universe(double g, double timeScale, double updateTime, GLuint width, GLuint height);
   ~Universe();
   void render();
   void update();

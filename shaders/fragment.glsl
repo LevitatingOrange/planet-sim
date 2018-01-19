@@ -36,8 +36,8 @@ uniform sampler2D normalMap;
 
 out vec3 color;
 
-void main() {
-  vec3 lightDirection = normalize(lightPosition - tessEvalPosition);
+vec3 calculateLight(vec3 light_pos) {
+  vec3 lightDirection = normalize(light_pos - tessEvalPosition);
   vec3 viewDirection = normalize(viewPosition - tessEvalPosition);
 
   vec3 normal;
@@ -50,8 +50,7 @@ void main() {
   //}
 
   if (tessEvalNormal == vec3(0,0,0)) {
-    color = vec3(1.0,1.0,1.0);
-    return;
+     return vec3(1.0,1.0,1.0);
   }
   
   vec3 halfwayDirection = normalize(viewDirection + lightDirection);
@@ -89,9 +88,13 @@ void main() {
 
   if (useSpecularTexture) {
     vec3 specularColor = vec3(texture(specularTexture, tessEvalTextureCoord));
-    color = (ambientLight + diffuseLight) * diffuseColor + specularLight * specularColor * diffuseColor;
+    return (ambientLight + diffuseLight) * diffuseColor + specularLight * specularColor * diffuseColor;
   } else {
-    color = (ambientLight + diffuseLight + specularLight) * diffuseColor;
+    return (ambientLight + diffuseLight + specularLight) * diffuseColor;
   }
+}
+
+void main() {
+  color = calculateLight(lightPosition);
 }
 

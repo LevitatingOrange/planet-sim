@@ -1,15 +1,14 @@
 #include "Camera.hpp"
+#include "iostream"
 
-Camera::Camera(GLuint program, std::vector<CelestialBody*>* bodies):
-  view_id(glGetUniformLocation(program, "view")),
-  view_position_id(glGetUniformLocation(program, "view_position")), bodies(bodies) {
+Camera::Camera(MainShader* mainShader, std::vector<CelestialBody*>* bodies):
+  mainShader(mainShader), bodies(bodies),
+  eye(glm::vec3(-2, 2, 5)) {
 }
 
-GlobalCamera::GlobalCamera(GLuint program, std::vector<CelestialBody*>* bodies):
-  Camera(program, bodies),
-  // AHH
+GlobalCamera::GlobalCamera(MainShader* mainShader, std::vector<CelestialBody*>* bodies):
+  Camera(mainShader, bodies),
   sensitivity(0.05), lastX(0), lastY(0),
-  eye(glm::vec3(0, 30, 0)),
   direction(0, -1, 0),
   camera_up(glm::vec3(0, 0, 1)),
   yaw(-90), pitch(0), speed_modifier(0.01),
@@ -19,11 +18,10 @@ GlobalCamera::GlobalCamera(GLuint program, std::vector<CelestialBody*>* bodies):
 void GlobalCamera::render() {
   camera_up = glm::normalize(glm::cross(direction, glm::normalize(glm::cross(up, direction))));
   view = glm::lookAt(eye, eye + direction, camera_up);
-  glUniformMatrix4fv(view_id, 1, GL_FALSE, &view[0][0]);
-  glUniform3fv(view_position_id, 1, (GLfloat*) &eye);
+  mainShader->setView(view);
+  mainShader->setViewPosition(eye);
 }
 void GlobalCamera::processInput(GLFWwindow* window) {
-
   double x, y;
   glfwGetCursorPos(window, &x, &y);
   float dx = (x - lastX) * sensitivity;

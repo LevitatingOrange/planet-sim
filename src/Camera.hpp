@@ -1,18 +1,17 @@
-#include "gl_headers.hpp"
-#include "CelestialBody.hpp"
+#include "headers.h"
 
 #ifndef CAMERA_H
 #define CAMERA_H
 
 class Camera {
 protected:
+  MainShader* mainShader;
   glm::mat4 view;
-  GLuint view_id;
-  GLuint view_position_id;
   std::vector<CelestialBody*>* bodies;
 public:
   glm::vec3 eye;
-  Camera(GLuint program, std::vector<CelestialBody*>* bodies);
+public:
+  Camera(MainShader* mainShader, std::vector<CelestialBody*>* bodies);
   virtual void render() = 0;
   virtual void processInput(GLFWwindow* window) = 0;
 };
@@ -33,7 +32,7 @@ private:
 
   bool pressed_r;
 public:
-  GlobalCamera(GLuint program, std::vector<CelestialBody*>* bodies);
+  GlobalCamera(MainShader* mainShader, std::vector<CelestialBody*>* bodies);
   ~GlobalCamera();
   virtual void render();
   virtual void processInput(GLFWwindow *window);

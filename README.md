@@ -21,3 +21,5 @@ it uses glad to include OpenGL Headers.
 - [x] Tessellation Shader
 - [ ] orbits
 - [ ] fps counter
+- [ ] fix obliquities
+- [ ] local camera model

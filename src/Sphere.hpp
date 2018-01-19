@@ -1,5 +1,4 @@
-#include "gl_headers.hpp"
-#include "util.hpp"
+#include "headers.h"
 #include <vector>
 
 #ifndef SPHERE_H
@@ -55,9 +54,7 @@ const float vertices[] = {
 // TODO: implement ellipsoids
 
 class Sphere {
-  GLuint model_id;
-  GLuint radius_id;
-  GLuint detail_id;
+  MainShader* mainShader;
   
   GLuint vertexArray = 0;
   GLuint vertexBuffer = 0;
@@ -75,7 +72,7 @@ public:
   float rotation_angle;
   float obliquity;
   
-  Sphere(GLuint program, glm::vec3 color, float radius, float rotation_angle, float obliquity);
+  Sphere(MainShader* mainShader, glm::vec3 color, float radius, float rotation_angle, float obliquity);
   ~Sphere();
   void render(glm::vec3 viewPosition);
   void update(glm::vec3 position, double scale);

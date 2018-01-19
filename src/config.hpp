@@ -1,6 +1,5 @@
-#include "Universe.hpp"
-#include "gl_headers.hpp"
+#include "headers.h"
 #ifndef CONFIG_H
 #define CONFIG_H
-Universe* readConfig(const char* configPath, GLuint program, float updateTime, GLuint width, GLuint height);
+Universe* readConfig(const char* configPath, float updateTime, GLuint width, GLuint height);
 #endif
