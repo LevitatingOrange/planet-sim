@@ -4,6 +4,12 @@ struct Light {
   vec3 ambient;
   vec3 diffuse;
   vec3 specular;
+
+  float constant;
+  float linear;
+  float quadratic;
+
+  vec3 position;
 };
 
 struct Material {
@@ -15,10 +21,9 @@ struct Material {
 };
 
 
-uniform vec3 lightPosition;
 uniform vec3 viewPosition;
 
-uniform Light light;
+uniform Light light1;
 uniform Material material;
 
 in vec3 tessEvalPosition;
@@ -36,9 +41,13 @@ uniform sampler2D normalMap;
 
 out vec3 color;
 
-vec3 calculateLight(vec3 light_pos) {
-  vec3 lightDirection = normalize(light_pos - tessEvalPosition);
+vec3 calculateLight(Light light) {
+  vec3 lightDirection = normalize(light.position - tessEvalPosition);
   vec3 viewDirection = normalize(viewPosition - tessEvalPosition);
+
+  float dist = length(light.position - tessEvalPosition);
+  float attenuation = 1.0 / (light.constant + light.linear * dist + 
+			      light.quadratic * (dist * dist));
 
   vec3 normal;
 
@@ -74,6 +83,8 @@ vec3 calculateLight(vec3 light_pos) {
     ambientLight = light.ambient * material.ambient;
   }
 
+  ambientLight *= attenuation;
+
   float diffuse = 0;
   // non lambertian reflector (e.g. moon)
   if (material.nonLambertian && dot(normal,lightDirection) > 0) {
@@ -83,8 +94,8 @@ vec3 calculateLight(vec3 light_pos) {
   }
   float specular = pow(max(dot(normal, halfwayDirection), 0), material.shininess);
 
-  vec3 diffuseLight = light.diffuse * material.diffuse * diffuse;
-  vec3 specularLight = light.specular * material.specular * specular;
+  vec3 diffuseLight = attenuation * light.diffuse * material.diffuse * diffuse;
+  vec3 specularLight = attenuation * light.specular * material.specular * specular;
 
   if (useSpecularTexture) {
     vec3 specularColor = vec3(texture(specularTexture, tessEvalTextureCoord));
@@ -95,6 +106,6 @@ vec3 calculateLight(vec3 light_pos) {
 }
 
 void main() {
-  color = calculateLight(lightPosition);
+  color = calculateLight(light1);
 }
 

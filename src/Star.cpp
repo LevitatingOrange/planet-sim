@@ -9,6 +9,7 @@ Star::Star(MainShader* mainShader, double physicsScale, glm::dvec3 position, glm
 }
 
 void Star::render(glm::vec3 viewPosition) {
+  light.position = position * physicsScale;
   mainShader->setLight(light);
   CelestialBody::render(viewPosition);
 }

@@ -2,8 +2,11 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 #include <string>
+#include <iostream>
+#include <chrono>
 
 void generateTexture(const char* path, GLuint* texture) {
+  using namespace std::chrono;
   stbi_set_flip_vertically_on_load(true);
   glGenTextures(1, texture);
   glBindTexture(GL_TEXTURE_2D, *texture);
@@ -14,13 +17,18 @@ void generateTexture(const char* path, GLuint* texture) {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 
   int width, height, nrChannels;
+  high_resolution_clock::time_point t1 = high_resolution_clock::now();
   unsigned char *data = stbi_load(path, &width, &height, &nrChannels, 0);
+  high_resolution_clock::time_point t2 = high_resolution_clock::now();
   if (data) {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
   } else {
     throw std::string("Failed to load texture ") + std::string(path);
   }
+  high_resolution_clock::time_point t3 = high_resolution_clock::now();
+  std::cout << "Time for image load " << duration_cast<microseconds>(t2-t1).count();
+  std::cout <<", time for texture uploading and mipmap generation: " << duration_cast<microseconds>(t3 - t2).count() << std::endl;
   stbi_image_free(data);
 }
 

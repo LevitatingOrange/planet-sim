@@ -100,7 +100,7 @@ Universe* readConfig(const char* configPath, float updateTime, GLuint width, GLu
     float rotation = get_double(b, "rotation", 0.0);
     float obliquity = get_double(b, "obliquity", 0.0);
     Material material = {glm::vec3(1.0), glm::vec3(1.0), glm::vec3(1.0), 1, false};
-    Light light = {glm::vec3(1.0), glm::vec3(1.0), glm::vec3(1.0)};
+    Light light = {glm::vec3(1.0), glm::vec3(1.0), glm::vec3(1.0), 1.0, 0.09, 0.032};
     const char* diffusePath = get_str(b, "diffusePath", nullptr);
     const char* diffuseNightPath = get_str(b, "diffuseNightPath", nullptr);
     const char* specularPath = get_str(b, "specularPath", nullptr);
@@ -122,8 +122,10 @@ Universe* readConfig(const char* configPath, float updateTime, GLuint width, GLu
       light.ambient = get_vec3(mat, "ambient", 1.0);
       light.diffuse = get_vec3(mat, "diffuse", 1.0);
       light.specular = get_vec3(mat, "specular", 1.0);
+      light.constant = get_doubleb(mat, "constant", 1.0);
+      light.linear = get_doubleb(mat, "linear", 0.09);
+      light.quadratic = get_doubleb(mat, "quadratic", 0.032);
     }
-
     if (b.HasMember("isStar") && b["isStar"].IsBool() && b["isStar"].GetBool()) {
       u->bodies.push_back(new Star(u->mainShader, physicsScale, position, velocity, mass, color, radius, rotation, obliquity, material, light,
 				   diffusePath != nullptr? new Texture(u->mainShader, diffusePath, diffuseNightPath, specularPath, normalPath) : nullptr));

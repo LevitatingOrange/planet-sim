@@ -4,7 +4,7 @@
 Simply put https://github.com/nothings/stb/blob/master/stb_image.h and https://github.com/Tencent/rapidjson/blob/master/include/rapidjson/ into include/
 and install GLFW and GLM on your system.
 You have to be connected to the internet while running `make` because
-it uses glad to include OpenGL Headers.
+it uses glad to generate OpenGL Headers Includes.
 
 ## TODO
 - [x] player movement
@@ -23,3 +23,4 @@ it uses glad to include OpenGL Headers.
 - [ ] fps counter
 - [ ] fix obliquities
 - [ ] local camera model
+- [ ] faster image loading (better library)

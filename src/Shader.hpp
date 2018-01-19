@@ -21,6 +21,12 @@ typedef struct _Light {
   glm::vec3 ambient;
   glm::vec3 diffuse;
   glm::vec3 specular;
+
+  float constant;
+  float linear;
+  float quadratic;
+
+  glm::vec3 position;
 } Light;
 
 
@@ -36,6 +42,10 @@ typedef struct _LightID {
   GLint ambient;
   GLint diffuse;
   GLint specular;
+  GLint constant;
+  GLint linear;
+  GLint quadratic;
+  GLint position;
 } LightID;
 
 

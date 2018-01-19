@@ -18,9 +18,13 @@ MainShader::MainShader(): Shader(createProgram(MAIN_VERTEX_SOURCE,
 				glGetUniformLocation(programID, "material.shininess"),
 				glGetUniformLocation(programID, "material.nonLambertian")}),
 			  lightID(LightID {
-			      glGetUniformLocation(programID, "light.ambient"),
-				glGetUniformLocation(programID, "light.diffuse"),
-				glGetUniformLocation(programID, "light.specular")}),
+			      glGetUniformLocation(programID, "light1.ambient"),
+				glGetUniformLocation(programID, "light1.diffuse"),
+				glGetUniformLocation(programID, "light1.specular"),
+				glGetUniformLocation(programID, "light1.constant"),
+				glGetUniformLocation(programID, "light1.linear"),
+				glGetUniformLocation(programID, "light1.quadratic"),
+				glGetUniformLocation(programID, "light1.position")}),
 			  radiusID(glGetUniformLocation(programID, "radius")),
 			  detailID(glGetUniformLocation(programID, "detail")),
 			  useTextureID(glGetUniformLocation(programID, "useTexture")),
@@ -64,6 +68,10 @@ void MainShader::setLight(Light light) {
   glUniform3fv(lightID.ambient, 1, (GLfloat*) &light.ambient);
   glUniform3fv(lightID.diffuse, 1, (GLfloat*) &light.diffuse);
   glUniform3fv(lightID.specular, 1, (GLfloat*) &light.specular);
+  glUniform1f(lightID.constant, (GLfloat) light.constant);
+  glUniform1f(lightID.linear, (GLfloat) light.linear);
+  glUniform1f(lightID.quadratic, (GLfloat) light.quadratic);
+  glUniform3fv(lightID.position, 1, (GLfloat*) &light.position);
 }
 
 void MainShader::setRadius(float radius) {
