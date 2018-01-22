@@ -1,15 +1,25 @@
 #include "headers.h"
+#include <deque>
+#include <vector>
 
 #ifndef CELESTIAL_BODY_H
 #define CELESTIAL_BODY_H
 
 class CelestialBody {
 public:
+  
   MainShader* mainShader;
   
   double physicsScale;
   
   Material material;
+
+  std::deque<glm::vec3> positions;
+  const unsigned int orbit_size = 100;
+  GLuint vertexArray = 0;
+  GLuint vertexBuffer = 0;
+  GLuint indexBuffer = 0;
+  std::vector<unsigned int> indices;
   
   glm::dvec3 position;
   glm::dvec3 velocity;
@@ -24,7 +34,9 @@ public:
 		Material material, Texture *texture);
   ~CelestialBody();
   virtual void render(glm::vec3 viewPosition);
+  virtual void renderOrbit();
   virtual void update(double timeScale);
+  void initGL();
 };
 
 #endif

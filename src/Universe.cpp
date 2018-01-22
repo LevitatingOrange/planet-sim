@@ -7,6 +7,7 @@ Universe::Universe(double g, double timeScale, double updateTime, GLuint width, 
   time(0.0), pressed_space(false), pressed_escape(false) {
   // matrices
   mainShader = new MainShader();
+  orbitShader = new OrbitShader();
   mainShader->use();
   projection = glm::perspective(glm::radians(45.0f), (float) width / (float)height, 0.1f, 200.0f);
   camera = new GlobalCamera(mainShader, &bodies);
@@ -18,15 +19,25 @@ Universe::~Universe() {
 }
 
 void Universe::render() {
-
+  
+  mainShader->use();
   camera->render();
-
   mainShader->setProjection(projection);
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   for (size_t i = 0; i < bodies.size(); i++) {
     bodies[i]->render(camera->eye);
   }
+
+  // render orbits
+  orbitShader->use();
+  orbitShader->setView(camera->view);
+  orbitShader->setProjection(projection);
+  orbitShader->setModel(glm::mat4(1.0));
+  bodies[1]->renderOrbit();
+  // for (size_t i = 0; i < bodies.size(); i++) {
+  //   bodies[i]->renderOrbit();
+  // }
 }
 
 void Universe::calculate() {

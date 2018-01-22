@@ -11,6 +11,7 @@ typedef enum _CameraMode {
 class Universe {
 public:
   MainShader* mainShader;
+  OrbitShader* orbitShader;
 private:
   glm::mat4 projection;
 

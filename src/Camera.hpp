@@ -6,9 +6,9 @@
 class Camera {
 protected:
   MainShader* mainShader;
-  glm::mat4 view;
   std::vector<CelestialBody*>* bodies;
 public:
+  glm::mat4 view;
   glm::vec3 eye;
 public:
   Camera(MainShader* mainShader, std::vector<CelestialBody*>* bodies);

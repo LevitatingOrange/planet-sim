@@ -4,6 +4,10 @@
 
 Shader::Shader(GLuint programID): programID(programID) {};
 
+void Shader::use() {
+  glUseProgram(programID);
+}
+
 MainShader::MainShader(): Shader(createProgram(MAIN_VERTEX_SOURCE,
 					       MAIN_TESS_CONTROL_SOURCE,
 					       MAIN_TESS_EVAL_SOURCE,
@@ -36,10 +40,6 @@ MainShader::MainShader(): Shader(createProgram(MAIN_VERTEX_SOURCE,
 } 
 
 MainShader::~MainShader() {
-}
-
-void MainShader::use() {
-  glUseProgram(programID);
 }
 
 void MainShader::setProjection(glm::mat4 projection) {
@@ -106,3 +106,29 @@ void MainShader::setViewPosition(glm::vec3 position) {
     glUniform3fv(viewPositionID, 1, (GLfloat*) &position);
 }
 			   
+
+OrbitShader::OrbitShader(): Shader(createProgram(ORBIT_VERTEX_SOURCE,
+						 nullptr,
+						 nullptr,
+					       ORBIT_FRAGMENT_SOURCE)),
+			  projectionID(glGetUniformLocation(programID, "projection")),
+			  viewID(glGetUniformLocation(programID, "view")),
+			  modelID(glGetUniformLocation(programID, "model"))
+{
+} 
+
+OrbitShader::~OrbitShader() {
+}
+
+
+void OrbitShader::setProjection(glm::mat4 projection) {
+  glUniformMatrix4fv(projectionID, 1, GL_FALSE, &projection[0][0]);
+}
+
+void OrbitShader::setView(glm::mat4 view) {
+  glUniformMatrix4fv(viewID, 1, GL_FALSE, &view[0][0]);
+}
+
+void OrbitShader::setModel(glm::mat4 model) {
+  glUniformMatrix4fv(modelID, 1, GL_FALSE, &model[0][0]);
+}

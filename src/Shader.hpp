@@ -7,6 +7,8 @@
 #define MAIN_TESS_CONTROL_SOURCE "./shaders/tess_control.glsl"
 #define MAIN_TESS_EVAL_SOURCE "./shaders/tess_eval.glsl"
 #define MAIN_FRAGMENT_SOURCE "./shaders/fragment.glsl"
+#define ORBIT_VERTEX_SOURCE "./shaders/orbit_vertex.glsl"
+#define ORBIT_FRAGMENT_SOURCE "./shaders/orbit_fragment.glsl"
 
 
 typedef struct _Material {
@@ -54,7 +56,7 @@ protected:
   GLuint programID;
 public:
   Shader(GLuint programID);
-  virtual void use() = 0;
+  virtual void use();
 };
 
 class MainShader : public Shader {
@@ -79,7 +81,6 @@ private:
 public:
   MainShader();
   ~MainShader();
-  virtual void use();
   void setProjection(glm::mat4 projection);
   void setView(glm::mat4 view);
   void setModel(glm::mat4 model);
@@ -91,5 +92,19 @@ public:
   void setTextureIDs(bool useNight, bool useSpecular, bool useNormal);
   void setTextureSettings(bool useNight, bool useSpecular, bool useNormal);
   void setViewPosition(glm::vec3 position);
+};
+
+class OrbitShader : public Shader {
+private:
+  GLuint projectionID;
+  GLuint viewID;
+  GLuint modelID;
+
+public:
+  OrbitShader();
+  ~OrbitShader();
+  void setProjection(glm::mat4 projection);
+  void setView(glm::mat4 view);
+  void setModel(glm::mat4 model);
 };
 #endif
