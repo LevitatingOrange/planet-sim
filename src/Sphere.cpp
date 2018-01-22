@@ -22,7 +22,7 @@ void Sphere::initGL() {
 }
 
 Sphere::Sphere(MainShader* mainShader, glm::vec3 color, float radius, float rotation_angle, float obliquity) :
-  mainShader(mainShader), color(color), rotation(glm::rotate(glm::mat4(1.0f), (float) M_PI/2, glm::vec3(1,0,0))),
+  mainShader(mainShader), color(color), rotation(glm::mat4(1.0)),
   translation(glm::mat4(1.0f)), old_position(glm::vec3(0,0,0)), radius(radius), rotation_angle(rotation_angle),
   obliquity(obliquity) {
   rotation = glm::rotate(rotation, obliquity, glm::vec3(0,0,1));
