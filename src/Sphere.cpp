@@ -55,7 +55,7 @@ void Sphere::render(glm::vec3 viewPosition) {
 }
 
 void Sphere::update(glm::vec3 position, double scale) {
-  translation = glm::translate(translation, old_position - position);
+  translation = glm::translate(translation, position - old_position);
   rotation = glm::rotate(rotation, rotation_angle * (float) scale, glm::vec3(0,0,1));
   old_position = position;
 }

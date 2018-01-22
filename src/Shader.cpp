@@ -132,3 +132,4 @@ void OrbitShader::setView(glm::mat4 view) {
 void OrbitShader::setModel(glm::mat4 model) {
   glUniformMatrix4fv(modelID, 1, GL_FALSE, &model[0][0]);
 }
+

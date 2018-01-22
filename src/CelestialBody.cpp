@@ -26,7 +26,7 @@ void CelestialBody::render(glm::vec3 viewPosition) {
 void CelestialBody::update(double timeScale) {
   sphere->update(position * physicsScale, timeScale);
   positions.push_front(position * physicsScale);
-  if (positions.size() >= orbit_size) {
+  if (positions.size() > orbit_size) {
     positions.pop_back();
   }
 }
@@ -34,21 +34,23 @@ void CelestialBody::update(double timeScale) {
 void CelestialBody::renderOrbit() {
   glBindVertexArray(vertexArray);
   glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-  glm::vec3* map = (glm::vec3*) glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
-
+  glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec3) * positions.size(), &positions[0]);
+  
+  // glm::vec3* map = (glm::vec3*) glMapBufferRange(GL_ARRAY_BUFFER, 0, positions.size(), GL_READ_WRITE);  
   for (size_t i = 0; i < positions.size(); i++) {
-    map[i] = positions[i];
+    std::cout << i << ": ";
+    vprint(positions[i]);
+  //   map[i] = positions[i];
   }
-  glUnmapBuffer(GL_ARRAY_BUFFER);
+  // glUnmapBuffer(GL_ARRAY_BUFFER);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
   glDrawElements(GL_LINE_STRIP, positions.size(),
-		 GL_UNSIGNED_INT, (void*) 0);
+  		 GL_UNSIGNED_INT, (void*) 0);
 }
 
 void CelestialBody::initGL() {
-  for (unsigned int i = 0; i < orbit_size; i++) {
+  for (unsigned int i = 0; i <= orbit_size; i++) {
     indices.push_back(i);
-    
   }
   glGenVertexArrays(1, &vertexArray);
   glBindVertexArray(vertexArray);
@@ -56,7 +58,7 @@ void CelestialBody::initGL() {
   // VBO
   glGenBuffers(1, &vertexBuffer);
   glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * positions.size(), NULL, GL_DYNAMIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * orbit_size, NULL, GL_STREAM_DRAW);
 
   // link VBO and attribute information into the VAO
   glEnableVertexAttribArray(0);
