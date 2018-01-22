@@ -1,10 +1,11 @@
 #include "CelestialBody.hpp"
 #include <iostream>
 
-CelestialBody::CelestialBody(MainShader* mainShader, double physicsScale, glm::dvec3 position, glm::dvec3 velocity, double mass,
+CelestialBody::CelestialBody(MainShader* mainShader, double physicsScale, size_t orbitSize,
+			     glm::dvec3 position, glm::dvec3 velocity, double mass,
 			     glm::vec3 color, float radius, float rotation, float obliquity,
 			     Material material, Texture *texture):
-  mainShader(mainShader), physicsScale(physicsScale),  material(material), orbit_size(100),
+  mainShader(mainShader), physicsScale(physicsScale),  material(material), orbitSize(orbitSize),
   position(position), velocity(velocity), mass(mass), texture(texture) {
   sphere = new Sphere(mainShader, color, radius, rotation, glm::radians(obliquity));
   sphere->update(position * physicsScale, 1.0);
@@ -26,7 +27,7 @@ void CelestialBody::render(glm::vec3 viewPosition) {
 void CelestialBody::update(double timeScale) {
   sphere->update(position * physicsScale, timeScale);
   positions.push_front(position * physicsScale);
-  if (positions.size() > orbit_size) {
+  if (positions.size() > orbitSize) {
     positions.pop_back();
   }
 }
@@ -46,7 +47,7 @@ void CelestialBody::renderOrbit() {
 }
 
 void CelestialBody::initGL() {
-  for (unsigned int i = 0; i <= orbit_size; i++) {
+  for (unsigned int i = 0; i <= orbitSize; i++) {
     indices.push_back(i);
   }
   glGenVertexArrays(1, &vertexArray);
@@ -55,7 +56,7 @@ void CelestialBody::initGL() {
   // VBO
   glGenBuffers(1, &vertexBuffer);
   glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * orbit_size, NULL, GL_STREAM_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * orbitSize, NULL, GL_STREAM_DRAW);
 
   // link VBO and attribute information into the VAO
   glEnableVertexAttribArray(0);

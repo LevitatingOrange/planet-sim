@@ -15,7 +15,7 @@ public:
   Material material;
 
   std::deque<glm::vec3> positions;
-  unsigned int orbit_size;
+  size_t orbitSize;
   GLuint vertexArray = 0;
   GLuint vertexBuffer = 0;
   GLuint indexBuffer = 0;
@@ -28,7 +28,7 @@ public:
 
   Texture *texture;
 
-  CelestialBody(MainShader* mainShader, double physicsScale, glm::dvec3 position, glm::dvec3 velocity,
+  CelestialBody(MainShader* mainShader, double physicsScale, size_t orbitSize, glm::dvec3 position, glm::dvec3 velocity,
 		double mass, glm::vec3 color,
 		float radius, float rotation, float obliquity,
 		Material material, Texture *texture);
