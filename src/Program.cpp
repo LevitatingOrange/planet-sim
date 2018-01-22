@@ -52,7 +52,7 @@ Program::Program(std::string name, std::string config_path, GLuint width, GLuint
   // start the universe
   //universe = new Universe(1.0, program, updateTime, width, height);
   universe = readConfig(config_path.c_str(), updateTime, width, height);
-
+  universe->window = window;
 }
 
 // http://gameprogrammingpatterns.com/game-loop.html
@@ -67,7 +67,7 @@ void Program::startMainLoop() {
     lag += elapsed;
     
     glfwPollEvents();
-    universe->processInput(window);
+    universe->processInput();
 
     while (lag >= updateTime) {
       universe->update();

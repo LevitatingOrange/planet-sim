@@ -3,8 +3,8 @@
 #include <iostream>
 
 Universe::Universe(double g, double timeScale, double updateTime, GLuint width, GLuint height):
-  g(g), timeScale(timeScale), updateTime(updateTime), running(false),
-  time(0.0), pressed_space(false), pressed_escape(false) {
+  g(g), timeScale(timeScale), updateTime(updateTime),
+  running(false), showOrbits(false), time(0.0), pressed(0) {
   // matrices
   mainShader = new MainShader();
   orbitShader = new OrbitShader();
@@ -47,12 +47,14 @@ void Universe::render() {
   }
 
   // render orbits
-  orbitShader->use();
-  orbitShader->setView(camera->view);
-  orbitShader->setProjection(projection);
-  orbitShader->setModel(glm::mat4(1.0));
-  for (size_t i = 0; i < bodies.size(); i++) {
-     bodies[i]->renderOrbit();
+  if (showOrbits) {
+    orbitShader->use();
+    orbitShader->setView(camera->view);
+    orbitShader->setProjection(projection);
+    orbitShader->setModel(glm::mat4(1.0));
+    for (size_t i = 0; i < bodies.size(); i++) {
+      bodies[i]->renderOrbit();
+    }
   }
 }
 
@@ -65,7 +67,6 @@ void Universe::calculate() {
     bi->position = bi->position + bi->velocity * dt;
 
     // calculate acceleration
-    //std::cout << "Object " << i << ": " << std::endl;
     glm::dvec3 force = glm::dvec3(0,0,0);
     for (size_t j = 0; j < bodies.size(); j++) {
       auto bj = bodies[j];
@@ -73,7 +74,6 @@ void Universe::calculate() {
     	force += (bj->mass * (bi->position - bj->position)) / 
     	  std::pow(glm::distance(bi->position, bj->position), 3);
       }
-      //std::cout << "    to Object " << j << " " << std::pow(glm::distance(bi->position, bj->position), 3) << std::endl;
     }
     glm::dvec3 acceleration = g * force * -1.0;
 
@@ -93,32 +93,37 @@ void Universe::update() {
 }
 
 
+void Universe::processKey(int key, bool* val) {
+  if (glfwGetKey(window, key) == GLFW_PRESS) {
+    if (!pressed[key]) {
+      (*val) = !(*val);
+    }
+    pressed[key] = true;
+  }
+  if (glfwGetKey(window, key) == GLFW_RELEASE) {
+    pressed[key] = false;
+  }
+}
 
-void Universe::processInput(GLFWwindow* window) {
+
+void Universe::processInput() {
   
   camera->processInput(window);
 
-  if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-    if (!pressed_space) {
-      running = !running;
-    }
-    pressed_space = true;
-  }
-  if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE) {
-    pressed_space = false;
-  }
+  processKey(GLFW_KEY_SPACE, &running);
+  processKey(GLFW_KEY_O, &showOrbits);
 
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-    if (!pressed_escape) {
+    if (!pressed[GLFW_KEY_ESCAPE]) {
       if (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED) {
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
       } else {
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  
       }
-      pressed_escape = true;
+      pressed[GLFW_KEY_ESCAPE]= true;
     }
   }
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_RELEASE) {
-    pressed_escape = false;
+    pressed[GLFW_KEY_ESCAPE] = false;
   }
 }

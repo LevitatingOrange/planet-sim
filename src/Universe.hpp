@@ -1,4 +1,5 @@
 #include "headers.h"
+#include <bitset>
 
 #ifndef UNIVERSE_H
 #define UNIVERSE_H
@@ -24,17 +25,18 @@ private:
 
   float updateTime;
   bool running;
+  bool showOrbits;
   float time;
-  bool pressed_space;
-  bool pressed_escape;
-  
+  std::bitset<350> pressed;
+  void processKey(int key, bool* val);
 public:
+  GLFWwindow* window;
   std::vector<CelestialBody*> bodies;
   Universe(double g, double timeScale, double updateTime, GLuint width, GLuint height);
   ~Universe();
   void render();
   void update();
   void calculate();
-  void processInput(GLFWwindow* window);
+  void processInput();
 };
 #endif
