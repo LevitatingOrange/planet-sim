@@ -7,7 +7,7 @@
 
 class CelestialBody {
 public:
-  
+  bool isStar;
   MainShader* mainShader;
   
   double physicsScale;

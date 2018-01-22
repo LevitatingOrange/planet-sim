@@ -10,16 +10,16 @@ it uses glad to generate OpenGL Headers Includes.
 - [x] player movement
 - [x] config file parsing
 - [x] lighting
-- [ ] multiple light sources
+- [x] multiple light sources
 - [x] lights on the dark side of planets (earth), make ambient light settable
 - [x] textures
 - [x] non lambertian reflectors
-- [ ] attentuation
+- [x] attentuation
 - [ ] ellipsoids instead of spheres
 - [ ] delta time in rendering and camera movement (maybe move input processing into update phase?)
 - [ ] Skybox
 - [x] Tessellation Shader
-- [ ] orbits
+- [x] orbits
 - [ ] fps counter
 - [ ] fix obliquities
 - [ ] local camera model

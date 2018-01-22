@@ -67,6 +67,7 @@ private:
 
   MaterialID materialID;
   LightID lightID;
+  GLuint numLightsID;
 
   GLuint radiusID;
   GLuint detailID;
@@ -85,7 +86,8 @@ public:
   void setView(glm::mat4 view);
   void setModel(glm::mat4 model);
   void setMaterial(Material material);
-  void setLight(Light light);
+  void setLight(Light light, size_t i);
+  void setNumLights(unsigned int numLights);
   void setRadius(float radius);
   void setDetail(unsigned int detail);
   void setUseTexture(bool useTexture);

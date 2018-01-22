@@ -6,10 +6,10 @@ Star::Star(MainShader* mainShader, double physicsScale, size_t orbitSize, glm::d
 	   Material material, Light light, Texture *texture):
   CelestialBody(mainShader, physicsScale, orbitSize, position, velocity, mass, color,
 		radius, rotation, obliquity, material, texture), light(light) {
+  isStar = true;
 }
 
-void Star::render(glm::vec3 viewPosition) {
+void Star::setLights(glm::vec3 viewPosition, size_t i) {
   light.position = position * physicsScale;
-  mainShader->setLight(light);
-  CelestialBody::render(viewPosition);
+  mainShader->setLight(light, i);
 }

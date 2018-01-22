@@ -1,5 +1,7 @@
 #version 400 core
 
+#define MAX_LIGHTS 10
+
 struct Light {
   vec3 ambient;
   vec3 diffuse;
@@ -23,7 +25,9 @@ struct Material {
 
 uniform vec3 viewPosition;
 
-uniform Light light1;
+uniform uint numLights;
+uniform Light lights[MAX_LIGHTS];
+//uniform Light light1;
 uniform Material material;
 
 in vec3 tessEvalPosition;
@@ -106,6 +110,13 @@ vec3 calculateLight(Light light) {
 }
 
 void main() {
-  color = calculateLight(light1);
+  // make everything read if we have too many lights
+  if (numLights > MAX_LIGHTS) {
+    color = vec3(1.0, 0.0, 0.0);
+    return;
+  }
+  for (uint i = 0; i < numLights; i++) {
+    color += calculateLight(lights[i]);
+  }
 }
 

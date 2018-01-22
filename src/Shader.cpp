@@ -22,13 +22,14 @@ MainShader::MainShader(): Shader(createProgram(MAIN_VERTEX_SOURCE,
 				glGetUniformLocation(programID, "material.shininess"),
 				glGetUniformLocation(programID, "material.nonLambertian")}),
 			  lightID(LightID {
-			      glGetUniformLocation(programID, "light1.ambient"),
-				glGetUniformLocation(programID, "light1.diffuse"),
-				glGetUniformLocation(programID, "light1.specular"),
-				glGetUniformLocation(programID, "light1.constant"),
-				glGetUniformLocation(programID, "light1.linear"),
-				glGetUniformLocation(programID, "light1.quadratic"),
-				glGetUniformLocation(programID, "light1.position")}),
+			      glGetUniformLocation(programID, "lights.ambient"),
+				glGetUniformLocation(programID, "lights.diffuse"),
+				glGetUniformLocation(programID, "lights.specular"),
+				glGetUniformLocation(programID, "lights.constant"),
+				glGetUniformLocation(programID, "lights.linear"),
+				glGetUniformLocation(programID, "lights.quadratic"),
+				glGetUniformLocation(programID, "lights.position")}),
+			  numLightsID(glGetUniformLocation(programID, "numLights")),
 			  radiusID(glGetUniformLocation(programID, "radius")),
 			  detailID(glGetUniformLocation(programID, "detail")),
 			  useTextureID(glGetUniformLocation(programID, "useTexture")),
@@ -64,7 +65,24 @@ void MainShader::setMaterial(Material material) {
 
 }
 
-void MainShader::setLight(Light light) {
+void MainShader::setLight(Light light, size_t i) {
+  std::string pre = "lights[" + std::to_string(i);
+  std::string amb = pre + std::string("].ambient");
+  std::string dif = pre + std::string("].diffuse");
+  std::string spe = pre + std::string("].specular");
+  std::string con = pre + std::string("].constant");
+  std::string lin = pre + std::string("].linear");
+  std::string qud = pre + std::string("].quadratic");
+  std::string pos = pre + std::string("].position");
+  lightID = LightID {
+    glGetUniformLocation(programID, (char*) amb.c_str()),
+    glGetUniformLocation(programID, (char*) dif.c_str()),
+    glGetUniformLocation(programID, (char*) spe.c_str()),
+    glGetUniformLocation(programID, (char*) con.c_str()),
+    glGetUniformLocation(programID, (char*) lin.c_str()),
+    glGetUniformLocation(programID, (char*) qud.c_str()),
+    glGetUniformLocation(programID, (char*) pos.c_str())};
+  
   glUniform3fv(lightID.ambient, 1, (GLfloat*) &light.ambient);
   glUniform3fv(lightID.diffuse, 1, (GLfloat*) &light.diffuse);
   glUniform3fv(lightID.specular, 1, (GLfloat*) &light.specular);
@@ -72,6 +90,10 @@ void MainShader::setLight(Light light) {
   glUniform1f(lightID.linear, (GLfloat) light.linear);
   glUniform1f(lightID.quadratic, (GLfloat) light.quadratic);
   glUniform3fv(lightID.position, 1, (GLfloat*) &light.position);
+}
+
+void MainShader::setNumLights(unsigned int numLights) {
+  glUniform1ui(numLightsID, numLights);
 }
 
 void MainShader::setRadius(float radius) {

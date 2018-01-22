@@ -9,6 +9,6 @@ public:
        double mass, glm::vec3 color,
        float radius, float rotation, float obliquity,
        Material material, Light light, Texture *texture);
-  void render(glm::vec3 viewPosition);
+  void setLights(glm::vec3 viewPosition, size_t i);
 };
 #endif

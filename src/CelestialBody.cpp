@@ -5,7 +5,7 @@ CelestialBody::CelestialBody(MainShader* mainShader, double physicsScale, size_t
 			     glm::dvec3 position, glm::dvec3 velocity, double mass,
 			     glm::vec3 color, float radius, float rotation, float obliquity,
 			     Material material, Texture *texture):
-  mainShader(mainShader), physicsScale(physicsScale),  material(material), orbitSize(orbitSize),
+  isStar(false), mainShader(mainShader), physicsScale(physicsScale),  material(material), orbitSize(orbitSize),
   position(position), velocity(velocity), mass(mass), texture(texture) {
   sphere = new Sphere(mainShader, color, radius, rotation, glm::radians(obliquity));
   sphere->update(position * physicsScale, 1.0);

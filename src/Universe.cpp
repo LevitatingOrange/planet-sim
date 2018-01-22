@@ -25,6 +25,23 @@ void Universe::render() {
   mainShader->setProjection(projection);
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  size_t numLights = 0;
+  
+  for (size_t i = 0; i < bodies.size(); i++) {
+    if (bodies[i]->isStar) {
+      numLights++;
+    }
+  }
+  mainShader->setNumLights(numLights);
+
+  size_t j = 0;
+  for (size_t i = 0; i < bodies.size(); i++) {
+    if (bodies[i]->isStar) {
+      ((Star*) bodies[i])->setLights(camera->eye, j);
+      j++;
+    }
+  }
   for (size_t i = 0; i < bodies.size(); i++) {
     bodies[i]->render(camera->eye);
   }
