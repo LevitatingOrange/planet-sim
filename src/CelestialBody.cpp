@@ -4,7 +4,7 @@
 CelestialBody::CelestialBody(MainShader* mainShader, double physicsScale, glm::dvec3 position, glm::dvec3 velocity, double mass,
 			     glm::vec3 color, float radius, float rotation, float obliquity,
 			     Material material, Texture *texture):
-  mainShader(mainShader), physicsScale(physicsScale),  material(material),
+  mainShader(mainShader), physicsScale(physicsScale),  material(material), orbit_size(100),
   position(position), velocity(velocity), mass(mass), texture(texture) {
   sphere = new Sphere(mainShader, color, radius, rotation, glm::radians(obliquity));
   sphere->update(position * physicsScale, 1.0);
@@ -34,15 +34,12 @@ void CelestialBody::update(double timeScale) {
 void CelestialBody::renderOrbit() {
   glBindVertexArray(vertexArray);
   glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-  glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec3) * positions.size(), &positions[0]);
-  
-  // glm::vec3* map = (glm::vec3*) glMapBufferRange(GL_ARRAY_BUFFER, 0, positions.size(), GL_READ_WRITE);  
+  //glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec3) * positions.size(), &positions[0]);
+  glm::vec3* map = (glm::vec3*) glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);  
   for (size_t i = 0; i < positions.size(); i++) {
-    std::cout << i << ": ";
-    vprint(positions[i]);
-  //   map[i] = positions[i];
+    map[i] = positions[i];
   }
-  // glUnmapBuffer(GL_ARRAY_BUFFER);
+  glUnmapBuffer(GL_ARRAY_BUFFER);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
   glDrawElements(GL_LINE_STRIP, positions.size(),
   		 GL_UNSIGNED_INT, (void*) 0);

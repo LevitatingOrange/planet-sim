@@ -34,10 +34,9 @@ void Universe::render() {
   orbitShader->setView(camera->view);
   orbitShader->setProjection(projection);
   orbitShader->setModel(glm::mat4(1.0));
-  bodies[1]->renderOrbit();
-  // for (size_t i = 1; i < bodies.size(); i++) {
-  //    bodies[i]->renderOrbit();
-  // }
+  for (size_t i = 1; i < bodies.size(); i++) {
+     bodies[i]->renderOrbit();
+  }
 }
 
 void Universe::calculate() {

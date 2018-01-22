@@ -15,7 +15,7 @@ public:
   Material material;
 
   std::deque<glm::vec3> positions;
-  const unsigned int orbit_size = 100;
+  unsigned int orbit_size;
   GLuint vertexArray = 0;
   GLuint vertexBuffer = 0;
   GLuint indexBuffer = 0;
