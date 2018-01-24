@@ -7,6 +7,10 @@
 
 class CelestialBody {
 public:
+  std::string name;
+  
+  bool glInited;
+  
   bool isStar;
   MainShader* mainShader;
   
@@ -16,6 +20,7 @@ public:
 
   std::deque<glm::vec3> positions;
   size_t orbitSize;
+  bool orbitCompleted;
   GLuint vertexArray = 0;
   GLuint vertexBuffer = 0;
   GLuint indexBuffer = 0;
@@ -28,7 +33,7 @@ public:
 
   Texture *texture;
 
-  CelestialBody(MainShader* mainShader, double physicsScale, size_t orbitSize, glm::dvec3 position, glm::dvec3 velocity,
+  CelestialBody(std::string name, MainShader* mainShader, double physicsScale, size_t orbitSize, glm::dvec3 position, glm::dvec3 velocity,
 		double mass, glm::vec3 color,
 		float radius, float rotation, float obliquity,
 		Material material, Texture *texture);

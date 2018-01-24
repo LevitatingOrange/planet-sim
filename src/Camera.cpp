@@ -11,7 +11,7 @@ GlobalCamera::GlobalCamera(MainShader* mainShader, std::vector<CelestialBody*>* 
   sensitivity(0.05), lastX(0), lastY(0),
   direction(0, -1, 0),
   camera_up(glm::vec3(0, 0, 1)),
-  yaw(-90), pitch(0), speed_modifier(0.01),
+  yaw(-90), pitch(0), speed_modifier(0.001),
   speed(0.1), up(glm::vec3(0, 1, 0)), pressed_r(false) {
 }
 

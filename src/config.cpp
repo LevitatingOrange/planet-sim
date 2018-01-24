@@ -12,6 +12,14 @@ void my_assert(bool cond, std::string msg) {
   }
 }
 
+std::string get_string(Value& b, const char* name, std::string def) {
+  if (b.HasMember(name) && b[name].IsString()) {
+    std::string result(b[name].GetString());
+    return result;
+  } else {
+    return def;
+  }
+}
 unsigned int get_uint(Value& b, const char* name, int def) {
   if (b.HasMember(name) && b[name].IsInt()) {
     int result = b[name].GetInt();
@@ -92,7 +100,8 @@ Universe* readConfig(const char* configPath, float updateTime, GLuint width, GLu
   for (auto& b : document["bodies"].GetArray()) {
     my_assert(b.IsObject(), "All bodies have to be objects");
 
-    size_t orbitSize = get_uint(b, "orbitSize", 100);
+    std::string name = get_string(b, "name", "body");
+    size_t orbitSize = get_uint(b, "orbitSize", 0);
     glm::dvec3 position = get_dvec3(b, "position", 0.0, physicsScale);
     glm::dvec3 velocity = get_dvec3(b, "velocity", 0.0, physicsScale);
     double mass = get_doubleb(b, "mass", 0.0);
@@ -128,10 +137,10 @@ Universe* readConfig(const char* configPath, float updateTime, GLuint width, GLu
       light.quadratic = get_doubleb(mat, "quadratic", 0.032);
     }
     if (b.HasMember("isStar") && b["isStar"].IsBool() && b["isStar"].GetBool()) {
-      u->bodies.push_back(new Star(u->mainShader, physicsScale, orbitSize, position, velocity, mass, color, radius, rotation, obliquity, material, light,
+      u->bodies.push_back(new Star(name, u->mainShader, physicsScale, orbitSize, position, velocity, mass, color, radius, rotation, obliquity, material, light,
 				   diffusePath != nullptr? new Texture(u->mainShader, diffusePath, diffuseNightPath, specularPath, normalPath) : nullptr));
     } else {
-      u->bodies.push_back(new CelestialBody(u->mainShader, physicsScale, orbitSize, position, velocity, mass, color, radius, rotation, obliquity, material,
+      u->bodies.push_back(new CelestialBody(name, u->mainShader, physicsScale, orbitSize, position, velocity, mass, color, radius, rotation, obliquity, material,
 					    diffusePath != nullptr? new Texture(u->mainShader, diffusePath, diffuseNightPath, specularPath, normalPath) : nullptr));
     }
   }

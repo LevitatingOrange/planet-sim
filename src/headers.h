@@ -1,6 +1,8 @@
 #ifndef HEADERS_H
 #define HEADERS_H
 
+#define ORBIT_EPSILON 0.1f
+
 #include "gl_headers.hpp"
 #include "util.hpp"
 #include "Shader.hpp"
