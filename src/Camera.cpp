@@ -1,13 +1,13 @@
 #include "Camera.hpp"
 #include "iostream"
 
-Camera::Camera(MainShader* mainShader, std::vector<CelestialBody*>* bodies):
-  mainShader(mainShader), bodies(bodies),
+Camera::Camera(MainShader* mainShader, std::vector<CelestialBody*>* bodies, CameraType cameraType):
+  mainShader(mainShader), bodies(bodies), cameraType(cameraType),
   eye(glm::vec3(-2, 2, 5)) {
 }
 
 GlobalCamera::GlobalCamera(MainShader* mainShader, std::vector<CelestialBody*>* bodies):
-  Camera(mainShader, bodies),
+  Camera(mainShader, bodies, GLOBAL_CAMERA),
   sensitivity(0.05), lastX(0), lastY(0),
   direction(0, -1, 0),
   camera_up(glm::vec3(0, 0, 1)),
@@ -116,3 +116,95 @@ void GlobalCamera::processInput(GLFWwindow* window) {
     }
   }
 }
+
+void GlobalCamera::update() {
+  return;
+}
+
+LocalCamera::LocalCamera(MainShader* mainShader, std::vector<CelestialBody*>* bodies):
+  Camera(mainShader, bodies, LOCAL_CAMERA), focusedBody(0), centerBody(0), radius(10), speed(1) {
+}
+
+void LocalCamera::render() {
+  glm::vec3 center = (*bodies)[focusedBody]->position * (*bodies)[focusedBody]->physicsScale;
+  glm::vec3 direction = eye - center;
+  glm::vec3 camera_up = glm::normalize(glm::cross(direction, glm::normalize(glm::cross(glm::vec3(0, 0, -1), direction))));
+  view = glm::lookAt(eye, center, camera_up);  
+  mainShader->setView(view);
+  mainShader->setViewPosition(eye);
+}
+
+void LocalCamera::update() {
+  glm::vec3 center = (*bodies)[focusedBody]->position * (*bodies)[focusedBody]->physicsScale;
+  glm::vec3 newEye = (*bodies)[centerBody]->position * (*bodies)[focusedBody]->physicsScale;
+  eye = newEye + radius * glm::normalize(newEye - center); 
+}
+
+void LocalCamera::processInput(GLFWwindow *window) {
+  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+    radius += speed;
+  }
+  if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+    radius -= speed;
+  }
+  
+  if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT)) {
+    if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && bodies->size() >= 1) {
+      centerBody = 0;
+    }
+    if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS && bodies->size() >= 2) {
+      centerBody = 1;
+    }
+    if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS && bodies->size() >= 3) {
+      centerBody = 2;
+    }
+    if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS && bodies->size() >= 4) {
+      centerBody = 3;
+    }
+    if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS && bodies->size() >= 5) {
+      centerBody = 4;
+    }
+    if (glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS && bodies->size() >= 6) {
+      centerBody = 5;
+    }
+    if (glfwGetKey(window, GLFW_KEY_7) == GLFW_PRESS && bodies->size() >= 7) {
+      centerBody = 6;
+    }
+    if (glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS && bodies->size() >= 8) {
+      centerBody = 7;
+    }
+    if (glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS && bodies->size() >= 9) {
+      centerBody = 8;
+    }
+  } else {
+    if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && bodies->size() >= 1) {
+      focusedBody = 0;
+    }
+    if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS && bodies->size() >= 2) {
+      focusedBody = 1;
+    }
+    if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS && bodies->size() >= 3) {
+      focusedBody = 2;
+    }
+    if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS && bodies->size() >= 4) {
+      focusedBody = 3;
+    }
+    if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS && bodies->size() >= 5) {
+      focusedBody = 4;
+    }
+    if (glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS && bodies->size() >= 6) {
+      focusedBody = 5;
+    }
+    if (glfwGetKey(window, GLFW_KEY_7) == GLFW_PRESS && bodies->size() >= 7) {
+      focusedBody = 6;
+    }
+    if (glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS && bodies->size() >= 8) {
+      focusedBody = 7;
+    }
+    if (glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS && bodies->size() >= 9) {
+      focusedBody = 8;
+    }
+  }
+}
+
+

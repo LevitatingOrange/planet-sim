@@ -1,7 +1,7 @@
 #ifndef HEADERS_H
 #define HEADERS_H
 
-#define ORBIT_EPSILON 0.1f
+#define ORBIT_EPSILON 0.01f
 
 #include "gl_headers.hpp"
 #include "util.hpp"

@@ -76,7 +76,7 @@ vec3 calculateLight(Light light) {
 	diffuseColor *= vec3(texture(diffuseDayTexture,tessEvalTextureCoord));
       } else {
 	// because night maps are already dark
-	ambientLight = light.ambient * (material.ambient + vec3(0.2));
+	ambientLight = light.ambient * (material.ambient + vec3(0.8));
 	diffuseColor *= vec3(texture(diffuseNightTexture,tessEvalTextureCoord));
       }
     } else {

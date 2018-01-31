@@ -22,6 +22,7 @@ private:
 
   // camera
   Camera* camera;
+  bool useLocalCamera;
 
   float updateTime;
   bool running;

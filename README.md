@@ -23,5 +23,5 @@ it uses glad to generate OpenGL Headers Includes.
 - [ ] fps counter
 - [x] fix obliquities
 - [ ] fix gimbal lock and other bugs in global camera model
-- [ ] local camera model
+- [x] local camera model
 - [ ] faster image loading (better library)b

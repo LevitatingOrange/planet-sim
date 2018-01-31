@@ -11,7 +11,7 @@ int main(int argc, char* argv[]) {
   }
   
   try {
-    Program p(argv[0], argv[1], 1024, 768, 16);
+    Program p(argv[0], argv[1], 1024, 768, 1);
     p.startMainLoop();
   } catch (std::string error) {
     log(ERROR, error);

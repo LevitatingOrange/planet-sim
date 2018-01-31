@@ -3,13 +3,13 @@
 #include <iostream>
 
 Universe::Universe(double g, double timeScale, double updateTime, GLuint width, GLuint height):
-  g(g), timeScale(timeScale), updateTime(updateTime),
+  g(g), timeScale(timeScale), useLocalCamera(false), updateTime(updateTime),
   running(false), showOrbits(false), time(0.0), pressed(0) {
   // matrices
   mainShader = new MainShader();
   orbitShader = new OrbitShader();
   mainShader->use();
-  projection = glm::perspective(glm::radians(45.0f), (float) width / (float)height, 0.1f, 200.0f);
+  projection = glm::perspective(glm::radians(45.0f), (float) width / (float)height, 0.001f, 10000.0f);
   camera = new GlobalCamera(mainShader, &bodies);
 }
 
@@ -83,6 +83,15 @@ void Universe::calculate() {
 }
 
 void Universe::update() {
+  if (useLocalCamera && camera->cameraType == GLOBAL_CAMERA) {
+    free(camera);
+    camera = new LocalCamera(mainShader, &bodies);
+  } else if (!useLocalCamera && camera->cameraType == LOCAL_CAMERA) {
+    free(camera);
+    camera = new GlobalCamera(mainShader, &bodies);
+  }
+  
+  camera->update();
   if (running) {
     for (size_t i = 0; i < bodies.size(); i++) {
       calculate();
@@ -112,6 +121,7 @@ void Universe::processInput() {
 
   processKey(GLFW_KEY_SPACE, &running);
   processKey(GLFW_KEY_O, &showOrbits);
+  processKey(GLFW_KEY_L, &useLocalCamera);
 
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
     if (!pressed[GLFW_KEY_ESCAPE]) {
