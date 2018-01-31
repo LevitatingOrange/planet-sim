@@ -1,6 +1,7 @@
 #version 400 core
 
 #define MAX_LIGHTS 10
+#define M_PI 3.1415926535897932384626433832795
 
 struct Light {
   vec3 ambient;
@@ -27,12 +28,14 @@ uniform vec3 viewPosition;
 
 uniform uint numLights;
 uniform Light lights[MAX_LIGHTS];
-//uniform Light light1;
 uniform Material material;
 
 in vec3 tessEvalPosition;
 in vec3 tessEvalNormal;
-in vec2 tessEvalTextureCoord;
+in vec3 texturePosition;
+
+uniform float radius;
+//in vec2 tessEvalTextureCoord;
 
 uniform bool useTexture;
 uniform bool useNightTexture;
@@ -46,6 +49,12 @@ uniform sampler2D normalMap;
 out vec3 color;
 
 vec3 calculateLight(Light light) {
+  
+  float latitude = acos(texturePosition.z / radius) / M_PI;
+  float longitude = (atan(texturePosition.y, texturePosition.x) + M_PI) / (2 * M_PI);
+
+  vec2 tessEvalTextureCoord = vec2(longitude, latitude);
+  
   vec3 lightDirection = normalize(light.position - tessEvalPosition);
   vec3 viewDirection = normalize(viewPosition - tessEvalPosition);
 
@@ -110,6 +119,10 @@ vec3 calculateLight(Light light) {
 }
 
 void main() {
+  if (radius==0) {
+    color = vec3(1.0, 0.0, 0.0);
+    return;
+  }
   // make everything read if we have too many lights
   if (numLights > MAX_LIGHTS) {
     color = vec3(1.0, 0.0, 0.0);
