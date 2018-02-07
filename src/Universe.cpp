@@ -18,6 +18,10 @@ Universe::~Universe() {
   //delete bodies;
 }
 
+void Universe::setDimensions(int width, int height) {
+  projection = glm::perspective(glm::radians(45.0f), (float) width / (float)height, 0.001f, 10000.0f);
+}
+
 void Universe::render() {
   
   mainShader->use();

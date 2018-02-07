@@ -155,3 +155,36 @@ void OrbitShader::setModel(glm::mat4 model) {
   glUniformMatrix4fv(modelID, 1, GL_FALSE, &model[0][0]);
 }
 
+TextShader::TextShader(): Shader(createProgram(TEXT_VERTEX_SOURCE,
+						 nullptr,
+						 nullptr,
+					       TEXT_FRAGMENT_SOURCE)),
+			  projectionID(glGetUniformLocation(programID, "projection")),
+			  textColorID(glGetUniformLocation(programID, "textColor"))
+			  //			  viewID(glGetUniformLocation(programID, "view")),
+			  //			  modelID(glGetUniformLocation(programID, "model"))
+{
+} 
+
+TextShader::~TextShader() {
+}
+
+
+void TextShader::setProjection(glm::mat4 projection) {
+  glUniformMatrix4fv(projectionID, 1, GL_FALSE, &projection[0][0]);
+}
+
+void TextShader::setTextColor(glm::vec3 color) {
+  glUniform3f(textColorID, color.x, color.y, color.z);
+}
+
+// void TextShader::setView(glm::mat4 view) {
+//   glUniformMatrix4fv(viewID, 1, GL_FALSE, &view[0][0]);
+// }
+
+// void TextShader::setModel(glm::mat4 model) {
+//   glUniformMatrix4fv(modelID, 1, GL_FALSE, &model[0][0]);
+// }
+
+
+

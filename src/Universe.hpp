@@ -35,6 +35,7 @@ public:
   std::vector<CelestialBody*> bodies;
   Universe(double g, double timeScale, double updateTime, GLuint width, GLuint height);
   ~Universe();
+  void setDimensions(int width, int height);
   void render();
   void update();
   void calculate();

@@ -122,7 +122,7 @@ void GlobalCamera::update() {
 }
 
 LocalCamera::LocalCamera(MainShader* mainShader, std::vector<CelestialBody*>* bodies):
-  Camera(mainShader, bodies, LOCAL_CAMERA), focusedBody(0), centerBody(0), radius(10), speed(1) {
+  Camera(mainShader, bodies, LOCAL_CAMERA), focusedBody(0), centerBody(0), radius(10), speed(0.1), speed_modifier(0.01) {
 }
 
 void LocalCamera::render() {
@@ -203,6 +203,15 @@ void LocalCamera::processInput(GLFWwindow *window) {
     }
     if (glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS && bodies->size() >= 9) {
       focusedBody = 8;
+    }
+  }
+  if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+    speed += speed_modifier;
+  }
+  if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+    speed -= speed_modifier;
+    if (speed < 0) {
+      speed = 0;
     }
   }
 }

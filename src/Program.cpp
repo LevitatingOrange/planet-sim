@@ -12,12 +12,20 @@ void _post_call_callback_default(const char *name, void *funcptr, int len_args, 
 }
 #endif
 
+void resize_callback(GLFWwindow* window, int width, int height) {
+  glViewport(0, 0, width, height);
+  Universe* universe = (Universe*) glfwGetWindowUserPointer(window);
+  if (universe != NULL) {
+    universe->setDimensions(width, height);
+  }
+}
+
 Program::Program(std::string name, std::string config_path, GLuint width, GLuint height, float updateTime): updateTime(updateTime) {
   if(!glfwInit()) {
     throw std::string("Failed to initialize GLFW");
   }
 
-  glfwWindowHint(GLFW_SAMPLES, 4); // 4x antialiasing
+  glfwWindowHint(GLFW_SAMPLES, 8); // antialiasing
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL 
@@ -38,21 +46,31 @@ Program::Program(std::string name, std::string config_path, GLuint width, GLuint
 #endif
 
   glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  
+  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
 
   //glViewport(0, 0, width, height);
   //glClearColor(0.0, 0.0, 1.0, 1.0);
 
-  GLfloat borderColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
-  glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);  
-
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
 
+  //glEnable(GL_CULL_FACE);
+  //glCullFace(GL_FRONT);
+
+  // camera correction
+  glEnable(GL_FRAMEBUFFER_SRGB); 
+
+  //fpsDisplay = new Text(std::string("/System/Library/Fonts/Menlo.ttc"), width, height, glm::vec2(width/2,height/2), 1, 1, glm::vec3(1.0, 1.0, 1.0));
+  //fpsDisplay->lines.push_back("FPS: ");
+  
   // start the universe
   //universe = new Universe(1.0, program, updateTime, width, height);
   universe = readConfig(config_path.c_str(), updateTime, width, height);
   universe->window = window;
+
+  glfwSetWindowUserPointer(window, universe);
+  
 }
 
 // http://gameprogrammingpatterns.com/game-loop.html
@@ -74,6 +92,7 @@ void Program::startMainLoop() {
       lag -= updateTime;
     }
     // TODO: fix stuttering (see article above)
+    //fpsDisplay->render();
     universe->render();
     glfwSwapBuffers(window);
   } while(glfwWindowShouldClose(window) == 0);

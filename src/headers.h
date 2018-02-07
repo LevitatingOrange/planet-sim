@@ -14,4 +14,5 @@
 #include "Camera.hpp"
 #include "Universe.hpp"
 #include "config.hpp"
+#include "Text.hpp"
 #endif

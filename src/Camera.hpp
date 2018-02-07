@@ -51,6 +51,7 @@ class LocalCamera: public Camera {
   size_t centerBody;
   float radius;
   float speed;
+  float speed_modifier;
 public:
   LocalCamera(MainShader* mainShader, std::vector<CelestialBody*>* bodies);
   ~LocalCamera();

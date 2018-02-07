@@ -9,7 +9,8 @@
 #define MAIN_FRAGMENT_SOURCE "./shaders/fragment.glsl"
 #define ORBIT_VERTEX_SOURCE "./shaders/orbit_vertex.glsl"
 #define ORBIT_FRAGMENT_SOURCE "./shaders/orbit_fragment.glsl"
-
+#define TEXT_VERTEX_SOURCE "./shaders/text_vertex.glsl"
+#define TEXT_FRAGMENT_SOURCE "./shaders/text_fragment.glsl"
 
 typedef struct _Material {
   glm::vec3 ambient;
@@ -108,5 +109,21 @@ public:
   void setProjection(glm::mat4 projection);
   void setView(glm::mat4 view);
   void setModel(glm::mat4 model);
+};
+
+class TextShader : public Shader {
+private:
+  GLuint projectionID;
+  GLuint textColorID;
+  //  GLuint viewID;
+  // GLuint modelID;
+
+public:
+  TextShader();
+  ~TextShader();
+  void setProjection(glm::mat4 projection);
+  void setTextColor(glm::vec3 color);
+  //void setView(glm::mat4 view);
+  //void setModel(glm::mat4 model);
 };
 #endif

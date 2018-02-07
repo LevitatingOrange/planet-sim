@@ -9,8 +9,8 @@ GENERATOR = c
 CXX=clang++
 CC=clang
 CCFLAGS=-I$(GLAD_DIR)/include
-CXXFLAGS=-Wall -std=c++14 -I$(INCLUDE_DIR) -I$(GLAD_DIR)/include
-LDFLAGS=-lglfw -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
+CXXFLAGS=-Wall -std=c++14 -I$(INCLUDE_DIR) -I$(GLAD_DIR)/include `pkg-config --cflags freetype2`
+LDFLAGS=-lglfw -lfreetype -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
 
 SRC_FILES := $(wildcard $(SRC_DIR)/*.cpp)
 OBJ_FILES := $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRC_FILES)) 

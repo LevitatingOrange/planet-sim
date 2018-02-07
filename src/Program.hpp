@@ -8,9 +8,10 @@
 #define PROGRAM_H
 
 class Program {
-GLFWwindow* window;
-Universe* universe;
-float updateTime;
+  GLFWwindow* window;
+  Universe* universe;
+  float updateTime;
+  Text* fpsDisplay;
 public:
   Program(std::string name, std::string config_path, GLuint width, GLuint height, float updateTime);
   void startMainLoop();
