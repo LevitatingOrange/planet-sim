@@ -7,12 +7,14 @@
 #ifndef PROGRAM_H
 #define PROGRAM_H
 
+#define FPS_DISPLAY_SMOOTHING 0.9
+
 class Program {
   GLFWwindow* window;
-  Universe* universe;
   float updateTime;
-  Text* fpsDisplay;
 public:
+  Universe* universe;
+  Text* fpsDisplay;
   Program(std::string name, std::string config_path, GLuint width, GLuint height, float updateTime);
   void startMainLoop();
   ~Program();

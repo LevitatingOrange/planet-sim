@@ -13,10 +13,14 @@ void _post_call_callback_default(const char *name, void *funcptr, int len_args, 
 #endif
 
 void resize_callback(GLFWwindow* window, int width, int height) {
+  std::cout << "window resized: width: " << width << " height: "
+	    << height  << std::endl;
   glViewport(0, 0, width, height);
-  Universe* universe = (Universe*) glfwGetWindowUserPointer(window);
-  if (universe != NULL) {
-    universe->setDimensions(width, height);
+  Program* program = (Program*) glfwGetWindowUserPointer(window);
+  if (program != NULL) {
+    program->universe->setDimensions(width, height);
+    program->fpsDisplay->setDimensions(width, height);
+    program->fpsDisplay->position = glm::vec2(width-200.0f, height-50.0f);
   }
 }
 
@@ -54,29 +58,34 @@ Program::Program(std::string name, std::string config_path, GLuint width, GLuint
 
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
-
+  
   //glEnable(GL_CULL_FACE);
   //glCullFace(GL_FRONT);
 
   // camera correction
-  glEnable(GL_FRAMEBUFFER_SRGB); 
+  glEnable(GL_FRAMEBUFFER_SRGB);
 
-  //fpsDisplay = new Text(std::string("/System/Library/Fonts/Menlo.ttc"), width, height, glm::vec2(width/2,height/2), 1, 1, glm::vec3(1.0, 1.0, 1.0));
-  //fpsDisplay->lines.push_back("FPS: ");
+  GLint fwidth;
+  GLint fheight;
+  glfwGetFramebufferSize(window, &fwidth, &fheight);
+
+  fpsDisplay = new Text(std::string("/System/Library/Fonts/Helvetica.ttc"), fwidth, fheight, glm::vec2(fwidth-200.0f, fheight-50.0f), 1.0, 14, 64, glm::vec3(1.0, 1.0, 1.0));
+  fpsDisplay->lines.push_back("FPS: ");
   
   // start the universe
   //universe = new Universe(1.0, program, updateTime, width, height);
-  universe = readConfig(config_path.c_str(), updateTime, width, height);
+  universe = readConfig(config_path.c_str(), updateTime, fwidth, fheight);
   universe->window = window;
 
-  glfwSetWindowUserPointer(window, universe);
-  
+  glfwSetWindowUserPointer(window, this);
+  glfwSetFramebufferSizeCallback(window, resize_callback);
 }
 
 // http://gameprogrammingpatterns.com/game-loop.html
 void Program::startMainLoop() {
   double previous = glfwGetTime() * 1000;
   double lag = 0.0;
+  int fps = 0;
   
   do {
     double current = glfwGetTime() * 1000;
@@ -92,8 +101,11 @@ void Program::startMainLoop() {
       lag -= updateTime;
     }
     // TODO: fix stuttering (see article above)
-    //fpsDisplay->render();
     universe->render();
+
+    fps = (fps * FPS_DISPLAY_SMOOTHING) + (1000/elapsed * (1.0 - FPS_DISPLAY_SMOOTHING));
+    fpsDisplay->lines[0] = std::string("FPS: ") + std::to_string(fps);
+    fpsDisplay->render();
     glfwSwapBuffers(window);
   } while(glfwWindowShouldClose(window) == 0);
 }

@@ -29,7 +29,7 @@ public:
   float lineHeight;
   glm::vec3 textColor;
   
-  Text(std::string fontName, GLuint width, GLuint height, glm::vec2 position, float scale, float lineHeight, glm::vec3 textColor);
+  Text(std::string fontName, GLuint width, GLuint height, glm::vec2 position, float scale, unsigned int fontsize, float lineHeight, glm::vec3 textColor);
   ~Text();
   
   void render();

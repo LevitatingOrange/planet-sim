@@ -2,7 +2,7 @@
 
 ## Installing
 Simply put https://github.com/nothings/stb/blob/master/stb_image.h and https://github.com/Tencent/rapidjson/blob/master/include/rapidjson/ into include/
-and install GLFW and GLM on your system.
+and install GLFW, GLM and GLAD on your system.
 You have to be connected to the internet while running `make` because
 it uses glad to generate OpenGL Headers Includes.
 
@@ -20,7 +20,7 @@ it uses glad to generate OpenGL Headers Includes.
 - [ ] Skybox
 - [x] Tessellation Shader
 - [x] orbits
-- [ ] fps counter
+- [x] fps counter
 - [x] fix obliquities
 - [ ] fix gimbal lock and other bugs in global camera model
 - [x] local camera model

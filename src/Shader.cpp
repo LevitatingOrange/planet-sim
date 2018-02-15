@@ -45,6 +45,7 @@ MainShader::~MainShader() {
 
 void MainShader::setProjection(glm::mat4 projection) {
   glUniformMatrix4fv(projectionID, 1, GL_FALSE, &projection[0][0]);
+
 }
 
 void MainShader::setView(glm::mat4 view) {
@@ -177,6 +178,11 @@ void TextShader::setProjection(glm::mat4 projection) {
 void TextShader::setTextColor(glm::vec3 color) {
   glUniform3f(textColorID, color.x, color.y, color.z);
 }
+
+void TextShader::setTextureIDs() {
+  glUniform1i(glGetUniformLocation(programID, "text"), 0);
+}
+
 
 // void TextShader::setView(glm::mat4 view) {
 //   glUniformMatrix4fv(viewID, 1, GL_FALSE, &view[0][0]);

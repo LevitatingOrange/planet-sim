@@ -1,7 +1,11 @@
 #include "Text.hpp"
+#include <iostream>
 
-Text::Text(std::string fontName, GLuint width, GLuint height, glm::vec2 position, float scale, float lineHeight, glm::vec3 textColor):
+Text::Text(std::string fontName, GLuint width, GLuint height, glm::vec2 position, float scale, unsigned int fontsize, float lineHeight, glm::vec3 textColor):
   shader(new TextShader()), position(position), scale(scale), lineHeight(lineHeight), textColor(textColor) {
+
+  projection = glm::ortho(0.0f, (float) width, 0.0f, (float) height);
+
   FT_Library ft;
   if (FT_Init_FreeType(&ft)) {
     throw std::string("Could not init FreeType");
@@ -10,12 +14,17 @@ Text::Text(std::string fontName, GLuint width, GLuint height, glm::vec2 position
   if (FT_New_Face(ft, fontName.c_str(), 0, &face)) {
     throw std::string("Could not load font");
   }
-  FT_Set_Pixel_Sizes(face, 0, 64);
-  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+  // TODO DPI not hardcoded!
+  FT_Set_Char_Size(face, 0, fontsize*64, 220, 220);
 
   for (GLubyte c = 0; c < 128; c++) {
-    if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
+    // if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
+    if (FT_Load_Char(face, c, FT_LOAD_DEFAULT)) {
       throw std::string("Could not load Glyph");
+    }
+    if (FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL)) {
+      throw std::string("Could not render Glyph");
     }
     GLuint texture;
     glGenTextures(1, &texture);
@@ -23,7 +32,7 @@ Text::Text(std::string fontName, GLuint width, GLuint height, glm::vec2 position
     glTexImage2D(
 		 GL_TEXTURE_2D,
 		 0,
-		 GL_RED,
+		 GL_RGB,
 		 (GLuint) face->glyph->bitmap.width,
 		 (GLuint) face->glyph->bitmap.rows,
 		 0,
@@ -35,6 +44,7 @@ Text::Text(std::string fontName, GLuint width, GLuint height, glm::vec2 position
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     Character character = {
         texture, 
@@ -46,8 +56,6 @@ Text::Text(std::string fontName, GLuint width, GLuint height, glm::vec2 position
   }
   FT_Done_Face(face);
   FT_Done_FreeType(ft);
-
-  projection = glm::ortho(0.0f, (float) width, 0.0f, (float) height);
 
   glGenVertexArrays(1, &VAO);
   glGenBuffers(1, &VBO);
@@ -61,13 +69,18 @@ Text::Text(std::string fontName, GLuint width, GLuint height, glm::vec2 position
 }
 
 void Text::render() {
-  //glEnable(GL_BLEND);
-  //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  GLfloat x = position.x;
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   GLfloat y = position.y;
   shader->use();
   shader->setTextColor(textColor);
+  shader->setProjection(projection);
+  shader->setTextureIDs();
+  glActiveTexture(GL_TEXTURE0);
+  glBindVertexArray(VAO);
+  
   for (size_t i = 0; i < lines.size(); i++) {
+    GLfloat x = position.x;
     std::string::const_iterator c;
     for (c = lines[i].begin(); c != lines[i].end(); c++) {
       Character ch = chars[*c];
@@ -89,7 +102,7 @@ void Text::render() {
       };
       // Render glyph texture over quad
       glBindTexture(GL_TEXTURE_2D, ch.textureID);
-      // Update content of VBO memory
+      // Update content of VBO memory    std::cout << lines[i] << std::endl;
       glBindBuffer(GL_ARRAY_BUFFER, VBO);
       glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices); 
       glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -102,7 +115,7 @@ void Text::render() {
   }
   glBindVertexArray(0);
   glBindTexture(GL_TEXTURE_2D, 0);
-  //glDisable(GL_BLEND);
+  glDisable(GL_BLEND);
 }
 
 void Text::setDimensions(GLuint width, GLuint height) {

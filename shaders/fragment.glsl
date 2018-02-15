@@ -95,15 +95,15 @@ vec3 calculateLight(Light light) {
   vec3 normal;
 
   //TODO
-  if (useNormalMap) {
-    //normal = texture(normalMap, tessEvalTextureCoord).rgb;
-    // transform normal vector to range [-1,1]
-    //normal = normalize(normal * 2.0 - 1.0);
-    normal = perturb_normal(tessEvalNormal, normalize(viewPosition), tessEvalTextureCoord);
-    //normal = normalize(texture(normalMap, tessEvalTextureCoord;).rgb * 2.0 - 1.0);
-  } else {
-    normal = normalize(tessEvalNormal);
-  }
+  // if (useNormalMap) {
+  //   //normal = texture(normalMap, tessEvalTextureCoord).rgb;
+  //   // transform normal vector to range [-1,1]
+  //   //normal = normalize(normal * 2.0 - 1.0);
+  //   normal = perturb_normal(tessEvalNormal, normalize(viewPosition - tessEvalPosition), tessEvalTextureCoord);
+  //   //normal = normalize(texture(normalMap, tessEvalTextureCoord;).rgb * 2.0 - 1.0);
+  // } else {
+  normal = normalize(tessEvalNormal);
+  // }
 
   if (tessEvalNormal == vec3(0,0,0)) {
      return vec3(1.0,1.0,1.0);

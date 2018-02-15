@@ -123,6 +123,7 @@ public:
   ~TextShader();
   void setProjection(glm::mat4 projection);
   void setTextColor(glm::vec3 color);
+  void setTextureIDs();
   //void setView(glm::mat4 view);
   //void setModel(glm::mat4 model);
 };
